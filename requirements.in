@@ -1,0 +1,8 @@
+docutils
+flake8
+modernize
+multilint
+pygments
+pytest
+pytest-cov
+requests

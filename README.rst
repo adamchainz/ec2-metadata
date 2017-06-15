@@ -1,5 +1,5 @@
 ============
-ec2_metadata
+ec2-metadata
 ============
 
 .. image:: https://img.shields.io/travis/adamchainz/ec2_metadata/master.svg
@@ -8,4 +8,4 @@ ec2_metadata
 .. image:: https://img.shields.io/pypi/v/ec2_metadata.svg
         :target: https://pypi.python.org/pypi/ec2_metadata
 
-An easy interface to querying the EC2 metadata API, with caching.
+An easy interface to query the EC2 metadata API, with caching.

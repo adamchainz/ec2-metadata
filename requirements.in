@@ -1,3 +1,4 @@
+cached-property
 docutils
 flake8
 modernize
@@ -6,3 +7,4 @@ pygments
 pytest
 pytest-cov
 requests
+responses

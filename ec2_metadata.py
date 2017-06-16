@@ -8,6 +8,8 @@ __author__ = 'Adam Johnson'
 __email__ = 'me@adamj.eu'
 __version__ = '1.0.0'
 
+__all__ = ('ec2_metadata',)
+
 
 SERVICE_URL = 'http://169.254.169.254/2016-09-02/'
 DYNAMIC_URL = SERVICE_URL + 'dynamic/'
@@ -40,10 +42,6 @@ class EC2Metadata(object):
     @cached_property
     def ami_manifest_path(self):
         return requests.get(METADATA_URL + 'ami-manifest-path').text
-
-    @cached_property
-    def hostname(self):
-        return requests.get(METADATA_URL + 'hostname').text
 
     @cached_property
     def instance_id(self):

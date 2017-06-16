@@ -90,11 +90,6 @@ def test_availability_zone(resps):
     assert ec2_metadata.availability_zone == 'eu-west-1a'
 
 
-def test_hostname(resps):
-    add_response(resps, 'hostname', 'ip-172-30-0-0.eu-west-1.compute.internal')
-    assert ec2_metadata.hostname == 'ip-172-30-0-0.eu-west-1.compute.internal'
-
-
 def test_instance_id(resps):
     add_response(resps, 'instance-id', 'i-12345678')
     assert ec2_metadata.instance_id == 'i-12345678'

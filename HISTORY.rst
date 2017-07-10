@@ -8,7 +8,7 @@ Pending Release
 
 .. Insert new release notes below this line
 
-* Add ``security_groups`` attribute.
+* Add ``security_groups`` and ``user_data`` attributes.
 
 1.0.0 (2017-06-16)
 ------------------

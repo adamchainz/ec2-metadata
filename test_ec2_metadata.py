@@ -6,7 +6,7 @@ import json
 import pytest
 import responses
 
-from ec2_metadata import DYNAMIC_URL, METADATA_URL, ec2_metadata
+from ec2_metadata import DYNAMIC_URL, METADATA_URL, USERDATA_URL, ec2_metadata
 
 
 @pytest.fixture(autouse=True)
@@ -20,8 +20,12 @@ def resps():
         yield resps
 
 
-def add_response(resps, url, text):
-    resps.add(responses.GET, METADATA_URL + url, body=text)
+def add_response(resps, url, text, **kwargs):
+    if url.startswith('http://'):
+        full_url = url
+    else:
+        full_url = METADATA_URL + url
+    resps.add(responses.GET, full_url, body=text, **kwargs)
 
 
 def add_identity_doc_response(resps, overrides=None):
@@ -157,3 +161,13 @@ def test_security_groups_emptystring(resps):
     # perhaps it's possible in OpenStack.
     add_response(resps, 'security-groups', '')
     assert ec2_metadata.security_groups == []
+
+
+def test_user_data_none(resps):
+    add_response(resps, USERDATA_URL, '', status=404)
+    assert ec2_metadata.user_data is None
+
+
+def test_user_data_something(resps):
+    add_response(resps, USERDATA_URL, b'foobar')
+    assert ec2_metadata.user_data == b'foobar'

@@ -52,11 +52,14 @@ There is a special singleton object in the module to import:
     from ec2_metadata import ec2_metadata
 
 This object has a number of lazy attributes that pull the respective data from
-the metadata service on first access, which are documented below. Attributes
-don't entirely correspond to the paths in the metadata service - they have been
-'cleaned up'. You may also want to refer to the `metadata service docs
+the metadata service on first access, all documented below. They are all
+strings (Python 3 ``str``) except where noted.
+
+Attributes don't entirely correspond to the paths in the metadata service -
+they have been 'cleaned up'. You may also want to refer to the `metadata
+service docs
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories>`_
-to understand what's there.
+to understand the exact contents.
 
 ============================== ========
 Attribute Name                 Contents
@@ -77,6 +80,7 @@ Attribute Name                 Contents
 ``region``                     The region the instance is running in, e.g. ``'eu-west-1'``
 ``reservation_id``             The ID of the reservation used to launch the instance, e.g. ``'r-12345678901234567'``
 ``security_groups``            List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']'``
+``user_data`` (``bytes``)      The raw user data assigned to the instance (not base64 encoded), or ``None`` if there is none.
 ============================== ========
 
 These values should all be safe to cache for the lifetime of your Python

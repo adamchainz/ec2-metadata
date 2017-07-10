@@ -11,9 +11,10 @@ __version__ = '1.0.0'
 __all__ = ('ec2_metadata',)
 
 
-SERVICE_URL = 'http://169.254.169.254/2016-09-02/'
+SERVICE_URL = 'http://169.254.169.254/latest/'
 DYNAMIC_URL = SERVICE_URL + 'dynamic/'
 METADATA_URL = SERVICE_URL + 'meta-data/'
+USERDATA_URL = SERVICE_URL + 'user-data/'
 
 
 class EC2Metadata(object):
@@ -86,6 +87,14 @@ class EC2Metadata(object):
     @cached_property
     def security_groups(self):
         return requests.get(METADATA_URL + 'security-groups').text.splitlines()
+
+    @cached_property
+    def user_data(self):
+        resp = requests.get(USERDATA_URL)
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.content
 
 
 ec2_metadata = EC2Metadata()

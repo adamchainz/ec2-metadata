@@ -85,7 +85,6 @@ class EC2Metadata(object):
 
     @cached_property
     def security_groups(self):
-        # since this can be one or more items, always return as an array.
         return requests.get(METADATA_URL + 'security-groups').text.splitlines()
 
 

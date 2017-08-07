@@ -6,14 +6,15 @@ from cached_property import cached_property
 
 __author__ = 'Adam Johnson'
 __email__ = 'me@adamj.eu'
-__version__ = '1.0.0'
+__version__ = '1.1.0'
 
 __all__ = ('ec2_metadata',)
 
 
-SERVICE_URL = 'http://169.254.169.254/2016-09-02/'
+SERVICE_URL = 'http://169.254.169.254/latest/'
 DYNAMIC_URL = SERVICE_URL + 'dynamic/'
 METADATA_URL = SERVICE_URL + 'meta-data/'
+USERDATA_URL = SERVICE_URL + 'user-data/'
 
 
 class EC2Metadata(object):
@@ -82,6 +83,10 @@ class EC2Metadata(object):
     @cached_property
     def reservation_id(self):
         return requests.get(METADATA_URL + 'reservation-id').text
+
+    @cached_property
+    def user_data(self):
+        return requests.get(USERDATA_URL).text
 
 
 ec2_metadata = EC2Metadata()

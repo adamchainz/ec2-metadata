@@ -8,6 +8,8 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Add ``security_groups`` attribute.
+
 1.0.0 (2017-06-16)
 ------------------
 

@@ -138,3 +138,22 @@ def test_region(resps):
 def test_reservation_id(resps):
     add_response(resps, 'reservation-id', 'r-12345678901234567')
     assert ec2_metadata.reservation_id == 'r-12345678901234567'
+
+
+def test_security_groups_single(resps):
+    # most common case: a single SG
+    add_response(resps, 'security-groups', 'security-group-one')
+    assert ec2_metadata.security_groups == ['security-group-one']
+
+
+def test_security_groups_two(resps):
+    # another common case: multiple SGs
+    add_response(resps, 'security-groups', "security-group-one\nsecurity-group-2")
+    assert ec2_metadata.security_groups == ['security-group-one', 'security-group-2']
+
+
+def test_security_groups_emptystring(resps):
+    # check '' too. Can't create an instance without a SG but we should safely handle it,
+    # perhaps it's possible in OpenStack.
+    add_response(resps, 'security-groups', '')
+    assert ec2_metadata.security_groups == []

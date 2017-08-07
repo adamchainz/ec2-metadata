@@ -79,7 +79,7 @@ Attribute Name                 Contents
 ``public_ipv4``                The public IPv4 address of the instance, e.g. ``'1.2.3.4'``
 ``region``                     The region the instance is running in, e.g. ``'eu-west-1'``
 ``reservation_id``             The ID of the reservation used to launch the instance, e.g. ``'r-12345678901234567'``
-``security_groups``            List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']'``
+``security_groups``            List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``
 ``user_data`` (``bytes``)      The raw user data assigned to the instance (not base64 encoded), or ``None`` if there is none.
 ============================== ========
 

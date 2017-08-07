@@ -139,6 +139,7 @@ def test_reservation_id(resps):
     add_response(resps, 'reservation-id', 'r-12345678901234567')
     assert ec2_metadata.reservation_id == 'r-12345678901234567'
 
+
 def test_security_groups(resps):
     # most common case: a single SG
     add_response(resps, 'security-groups', 'security-group-one')
@@ -154,5 +155,5 @@ def test_security_groups(resps):
     assert ec2_metadata.security_groups == []
     # finally, check None
     ec2_metadata.clear_all()
-    add_response(resps, 'security-groups', None)
+    add_response(resps, 'security-groups', text=None)
     assert ec2_metadata.security_groups == []

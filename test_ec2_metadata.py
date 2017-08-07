@@ -140,20 +140,20 @@ def test_reservation_id(resps):
     assert ec2_metadata.reservation_id == 'r-12345678901234567'
 
 
-def test_security_groups(resps):
+def test_security_groups_single(resps):
     # most common case: a single SG
     add_response(resps, 'security-groups', 'security-group-one')
     assert ec2_metadata.security_groups == ['security-group-one']
+
+
+def test_security_groups_two(resps):
     # another common case: multiple SGs
-    ec2_metadata.clear_all()
     add_response(resps, 'security-groups', "security-group-one\nsecurity-group-2")
     assert ec2_metadata.security_groups == ['security-group-one', 'security-group-2']
+
+
+def test_security_groups_emptystring(resps):
     # check '' too. Can't create an instance without a SG but we should safely handle it,
     # perhaps it's possible in OpenStack.
-    ec2_metadata.clear_all()
     add_response(resps, 'security-groups', '')
-    assert ec2_metadata.security_groups == []
-    # finally, check None
-    ec2_metadata.clear_all()
-    add_response(resps, 'security-groups', text=None)
     assert ec2_metadata.security_groups == []

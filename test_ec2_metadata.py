@@ -114,6 +114,13 @@ def test_mac(resps):
     assert ec2_metadata.mac == '0a:d2:ae:4d:f3:12'
 
 
+def test_network(resps):
+    add_response(resps, 'network/interfaces/macs/', '00:11:22:33:44:55/')
+    add_response(resps, 'network/interfaces/macs/00:11:22:33:44:55/', 'foo')
+    add_response(resps, 'network/interfaces/macs/00:11:22:33:44:55/foo', 'bar')
+    assert ec2_metadata.network == {'00:11:22:33:44:55': {'foo': 'bar'}}
+
+
 def test_private_hostname(resps):
     add_response(resps, 'local-hostname', 'ip-172-30-0-0.eu-west-1.compute.internal')
     assert ec2_metadata.private_hostname == 'ip-172-30-0-0.eu-west-1.compute.internal'

@@ -61,6 +61,28 @@ class EC2Metadata(object):
         return requests.get(METADATA_URL + 'mac').text
 
     @cached_property
+    def network(self):
+        '''The network interface map is keyed by MAC address. This structure will
+           be returned like how it is given in the metadata interface.'''
+        return self.recursive_get_data(METADATA_URL, 'network/interfaces/macs/')
+
+    # helper function, not really designed to be called directly by clients.
+    # this works by recognizing that value-only keys don't have a trailing slash,
+    # and keys with a trailing slash have subkeys.
+    def recursive_get_data(self, baseurl, key):
+        curr_url = baseurl + key
+        if not key.endswith('/'): # don't explore further, just fetch
+          return requests.get(curr_url).text
+
+        # trailing slash, need to explore further
+        ret = {}
+        for l in requests.get(curr_url).text.splitlines():
+            lkey = l.rstrip('/')
+            ret[lkey] = self.recursive_get_data(curr_url, l)
+
+        return ret
+
+    @cached_property
     def private_hostname(self):
         return requests.get(METADATA_URL + 'local-hostname').text
 

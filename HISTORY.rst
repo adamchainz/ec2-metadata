@@ -8,6 +8,8 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Add ``network``` attribute.
+
 1.1.0 (2017-08-07)
 ------------------
 

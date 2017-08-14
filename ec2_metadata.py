@@ -71,8 +71,8 @@ class EC2Metadata(object):
     # and keys with a trailing slash have subkeys.
     def recursive_get_data(self, baseurl, key):
         curr_url = baseurl + key
-        if not key.endswith('/'): # don't explore further, just fetch
-          return requests.get(curr_url).text
+        if not key.endswith('/'):  # don't explore further, just fetch
+            return requests.get(curr_url).text
 
         # trailing slash, need to explore further
         ret = {}

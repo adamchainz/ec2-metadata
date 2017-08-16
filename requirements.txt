@@ -14,7 +14,7 @@ docutils==0.14
 enum34==1.1.6             # via flake8
 flake8==3.4.1
 funcsigs==1.0.2           # via mock
-idna==2.5                 # via requests
+idna==2.6                 # via requests
 mccabe==0.6.1             # via flake8
 mock==2.0.0               # via responses
 modernize==0.5
@@ -26,7 +26,7 @@ pyflakes==1.5.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
 pytest==3.2.1
-requests==2.18.3
+requests==2.18.4
 responses==0.7.0
 six==1.10.0               # via mock, responses
 urllib3==1.22             # via requests

@@ -11,7 +11,9 @@ __version__ = '1.1.0'
 __all__ = ('ec2_metadata',)
 
 
-SERVICE_URL = 'http://169.254.169.254/latest/'
+# We purposefully use a fixed version of the service rather than 'latest' in
+# case any backward incompatible changes are made in the future
+SERVICE_URL = 'http://169.254.169.254/2016-09-02/'
 DYNAMIC_URL = SERVICE_URL + 'dynamic/'
 METADATA_URL = SERVICE_URL + 'meta-data/'
 USERDATA_URL = SERVICE_URL + 'user-data/'

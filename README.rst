@@ -73,6 +73,7 @@ Attribute Name                 Contents
 ``instance_identity_document`` A dictionary of dynamic data, see `AWS docs <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`_
 ``instance_type``              The current instance's type, e.g. ``'t2.nano'``
 ``mac``                        The instance's MAC address, e.g. ``'0a:d2:ae:4d:f3:12'``
+``network``                    A nested dictionary of network interfaces and their parameters.
 ``private_hostname``           The private IPv4 DNS hostname of the instance, e.g. ``'ip-172-30-0-0.eu-west-1.compute.internal'``
 ``private_ipv4``               The private IPv4 of the instance, e.g. ``'172.30.0.0'``
 ``public_hostname``            The public DNS hostname of the instance, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``

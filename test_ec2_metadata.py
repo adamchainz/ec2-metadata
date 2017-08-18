@@ -6,7 +6,7 @@ import json
 import pytest
 import responses
 
-from ec2_metadata import DYNAMIC_URL, METADATA_URL, USERDATA_URL, ec2_metadata
+from ec2_metadata import DYNAMIC_URL, METADATA_URL, USERDATA_URL, NetworkInterface, ec2_metadata
 
 
 @pytest.fixture(autouse=True)
@@ -27,6 +27,11 @@ def add_response(resps, url, text, **kwargs):
         full_url = METADATA_URL + url
     resps.add(responses.GET, full_url, body=text, **kwargs)
 
+
+example_mac = '00:11:22:33:44:55'
+
+
+# EC2Metadata tests
 
 def add_identity_doc_response(resps, overrides=None):
     identity_doc = {
@@ -110,15 +115,13 @@ def test_instance_type(resps):
 
 
 def test_mac(resps):
-    add_response(resps, 'mac', '0a:d2:ae:4d:f3:12')
-    assert ec2_metadata.mac == '0a:d2:ae:4d:f3:12'
+    add_response(resps, 'mac', example_mac)
+    assert ec2_metadata.mac == example_mac
 
 
-def test_network(resps):
-    add_response(resps, 'network/interfaces/macs/', '00:11:22:33:44:55/')
-    add_response(resps, 'network/interfaces/macs/00:11:22:33:44:55/', 'foo')
-    add_response(resps, 'network/interfaces/macs/00:11:22:33:44:55/foo', 'bar')
-    assert ec2_metadata.network == {'00:11:22:33:44:55': {'foo': 'bar'}}
+def test_network_interfaces(resps):
+    add_response(resps, 'network/interfaces/macs/', example_mac + '/')
+    assert ec2_metadata.network_interfaces == {example_mac: NetworkInterface(example_mac)}
 
 
 def test_private_hostname(resps):
@@ -178,3 +181,46 @@ def test_user_data_none(resps):
 def test_user_data_something(resps):
     add_response(resps, USERDATA_URL, b'foobar')
     assert ec2_metadata.user_data == b'foobar'
+
+
+# NetworkInterface tests
+
+def add_interface_response(resps, url, text, **kwargs):
+    full_url = METADATA_URL + 'network/interfaces/macs/' + example_mac + url
+    resps.add(responses.GET, full_url, body=text, **kwargs)
+
+
+def test_network_interface_equal():
+    assert NetworkInterface('a') == NetworkInterface('a')
+
+
+def test_network_interface_not_equal():
+    assert NetworkInterface('a') != NetworkInterface('b')
+
+
+def test_network_interface_not_equal_class():
+    assert NetworkInterface('a') != 'a'
+
+
+def test_network_interface_repr():
+    assert "'abc'" in repr(NetworkInterface('abc'))
+
+
+def test_network_interface_device_number(resps):
+    add_interface_response(resps, '/device-number', '0')
+    assert NetworkInterface(example_mac).device_number == 0
+
+
+def test_network_interface_private_hostname(resps):
+    add_interface_response(resps, '/local-hostname', 'ip-172-30-0-0.eu-west-1.compute.internal')
+    assert NetworkInterface(example_mac).private_hostname == 'ip-172-30-0-0.eu-west-1.compute.internal'
+
+
+def test_network_interface_private_ipv4s(resps):
+    add_interface_response(resps, '/local-ipv4s', '172.30.0.0\n172.30.0.1')
+    assert NetworkInterface(example_mac).private_ipv4s == ['172.30.0.0', '172.30.0.1']
+
+
+def test_network_interface_subnet_id(resps):
+    add_interface_response(resps, '/subnet-id', 'subnet-12345678')
+    assert NetworkInterface(example_mac).subnet_id == 'subnet-12345678'

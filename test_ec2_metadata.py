@@ -216,8 +216,8 @@ def test_network_interface_ipv4_associations(resps):
     add_interface_response(resps, '/ipv4-associations/54.0.0.0', '172.30.0.0')
     add_interface_response(resps, '/ipv4-associations/54.0.0.1', '172.30.0.1')
     assert NetworkInterface(example_mac).ipv4_associations == {
-        '54.0.0.0': '172.30.0.0',
-        '54.0.0.1': '172.30.0.1',
+        '54.0.0.0': ['172.30.0.0'],
+        '54.0.0.1': ['172.30.0.1'],
     }
 
 

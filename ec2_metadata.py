@@ -133,11 +133,11 @@ class NetworkInterface(BaseLazyObject):
     @cached_property
     def ipv4_associations(self):
         associations = {}
-        for private_ip in self.public_ipv4s:
-            resp = requests.get(self._url('ipv4-associations/{}'.format(private_ip)))
+        for public_ip in self.public_ipv4s:
+            resp = requests.get(self._url('ipv4-associations/{}'.format(public_ip)))
             resp.raise_for_status()
-            public_ip = resp.text
-            associations[private_ip] = public_ip
+            private_ips = resp.text.splitlines()
+            associations[public_ip] = private_ips
         return associations
 
     # No IPV6 instances at hand to test this on, so I only know you get 404 in

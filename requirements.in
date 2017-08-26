@@ -1,9 +1,9 @@
 cached-property
-docutils
+# docutils - removed due to unfixable "Duplicate implicit target name"
 flake8
 modernize
 multilint
-pygments
+# pygments - removed due to unfixable "Duplicate implicit target name"
 pytest
 pytest-cov
 requests

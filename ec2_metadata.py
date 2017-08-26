@@ -68,7 +68,7 @@ class EC2Metadata(BaseLazyObject):
     @cached_property
     def network_interfaces(self):
         macs_text = requests.get(METADATA_URL + 'network/interfaces/macs/').text
-        macs = [line.rstrip('/') for line in macs_text.split('\n')]
+        macs = [line.rstrip('/') for line in macs_text.splitlines()]
         return {mac: NetworkInterface(mac) for mac in macs}
 
     @cached_property
@@ -140,13 +140,23 @@ class NetworkInterface(BaseLazyObject):
             associations[private_ip] = public_ip
         return associations
 
+    # No IPV6 instances at hand to test this on, so I only know you get 404 in
+    # case there are none
+    # @cached_property
+    # def ipv6s(self):
+    #     pass
+
+    @cached_property
+    def owner_id(self):
+        return requests.get(self._url('owner-id')).text
+
     @cached_property
     def private_hostname(self):
         return requests.get(self._url('local-hostname')).text
 
     @cached_property
     def private_ipv4s(self):
-        return requests.get(self._url('local-ipv4s')).text.split('\n')
+        return requests.get(self._url('local-ipv4s')).text.splitlines()
 
     @cached_property
     def public_hostname(self):
@@ -154,7 +164,15 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def public_ipv4s(self):
-        return requests.get(self._url('public-ipv4s')).text.split('\n')
+        return requests.get(self._url('public-ipv4s')).text.splitlines()
+
+    @cached_property
+    def security_groups(self):
+        return requests.get(self._url('security-groups')).text.splitlines()
+
+    @cached_property
+    def security_group_ids(self):
+        return requests.get(self._url('security-group-ids')).text.splitlines()
 
     @cached_property
     def subnet_id(self):

@@ -221,6 +221,11 @@ def test_network_interface_ipv4_associations(resps):
     }
 
 
+def test_network_interface_owner_id(resps):
+    add_interface_response(resps, '/owner-id', '123456789012')
+    assert NetworkInterface(example_mac).owner_id == '123456789012'
+
+
 def test_network_interface_private_hostname(resps):
     add_interface_response(resps, '/local-hostname', 'ip-172-30-0-0.eu-west-1.compute.internal')
     assert NetworkInterface(example_mac).private_hostname == 'ip-172-30-0-0.eu-west-1.compute.internal'
@@ -239,6 +244,16 @@ def test_network_interface_public_hostname(resps):
 def test_network_interface_public_ipv4s(resps):
     add_interface_response(resps, '/public-ipv4s', '54.0.0.0\n54.0.0.1')
     assert NetworkInterface(example_mac).public_ipv4s == ['54.0.0.0', '54.0.0.1']
+
+
+def test_network_interface_security_groups(resps):
+    add_interface_response(resps, '/security-groups', 'foo\nbar')
+    assert NetworkInterface(example_mac).security_groups == ['foo', 'bar']
+
+
+def test_network_interface_security_group_ids(resps):
+    add_interface_response(resps, '/security-group-ids', 'sg-12345678\nsg-12345679')
+    assert NetworkInterface(example_mac).security_group_ids == ['sg-12345678', 'sg-12345679']
 
 
 def test_network_interface_subnet_id(resps):

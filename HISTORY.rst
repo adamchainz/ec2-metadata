@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.2.0 (2017-08-26)
+------------------
+
 * Add ``network_interfaces`` attribute which is a list of ``NetworkInterface``
   instances, which have many attributes themselves.
 

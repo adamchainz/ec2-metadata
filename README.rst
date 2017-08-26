@@ -172,8 +172,7 @@ The ID of the reservation used to launch the instance, e.g.
 ``security_groups: List[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-List of security groups by name, e.g.
-``['ssh-access', 'custom-sg-1']``.
+List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
 
 ``user_data: bytes``
 ~~~~~~~~~~~~~~~~~~~~

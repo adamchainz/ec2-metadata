@@ -131,12 +131,30 @@ class NetworkInterface(BaseLazyObject):
         return int(requests.get(self._url('device-number')).text)
 
     @cached_property
+    def ipv4_associations(self):
+        associations = {}
+        for private_ip in self.public_ipv4s:
+            resp = requests.get(self._url('ipv4-associations/{}'.format(private_ip)))
+            resp.raise_for_status()
+            public_ip = resp.text
+            associations[private_ip] = public_ip
+        return associations
+
+    @cached_property
     def private_hostname(self):
         return requests.get(self._url('local-hostname')).text
 
     @cached_property
     def private_ipv4s(self):
         return requests.get(self._url('local-ipv4s')).text.split('\n')
+
+    @cached_property
+    def public_hostname(self):
+        return requests.get(self._url('public-hostname')).text
+
+    @cached_property
+    def public_ipv4s(self):
+        return requests.get(self._url('public-ipv4s')).text.split('\n')
 
     @cached_property
     def subnet_id(self):

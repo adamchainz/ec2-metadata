@@ -211,6 +211,16 @@ def test_network_interface_device_number(resps):
     assert NetworkInterface(example_mac).device_number == 0
 
 
+def test_network_interface_ipv4_associations(resps):
+    add_interface_response(resps, '/public-ipv4s', '54.0.0.0\n54.0.0.1')
+    add_interface_response(resps, '/ipv4-associations/54.0.0.0', '172.30.0.0')
+    add_interface_response(resps, '/ipv4-associations/54.0.0.1', '172.30.0.1')
+    assert NetworkInterface(example_mac).ipv4_associations == {
+        '54.0.0.0': '172.30.0.0',
+        '54.0.0.1': '172.30.0.1',
+    }
+
+
 def test_network_interface_private_hostname(resps):
     add_interface_response(resps, '/local-hostname', 'ip-172-30-0-0.eu-west-1.compute.internal')
     assert NetworkInterface(example_mac).private_hostname == 'ip-172-30-0-0.eu-west-1.compute.internal'
@@ -219,6 +229,16 @@ def test_network_interface_private_hostname(resps):
 def test_network_interface_private_ipv4s(resps):
     add_interface_response(resps, '/local-ipv4s', '172.30.0.0\n172.30.0.1')
     assert NetworkInterface(example_mac).private_ipv4s == ['172.30.0.0', '172.30.0.1']
+
+
+def test_network_interface_public_hostname(resps):
+    add_interface_response(resps, '/public-hostname', '')
+    assert NetworkInterface(example_mac).public_hostname == ''
+
+
+def test_network_interface_public_ipv4s(resps):
+    add_interface_response(resps, '/public-ipv4s', '54.0.0.0\n54.0.0.1')
+    assert NetworkInterface(example_mac).public_ipv4s == ['54.0.0.0', '54.0.0.1']
 
 
 def test_network_interface_subnet_id(resps):

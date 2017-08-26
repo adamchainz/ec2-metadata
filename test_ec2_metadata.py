@@ -185,7 +185,7 @@ def test_user_data_something(resps):
 
 # NetworkInterface tests
 
-def add_interface_response(resps, url, text, **kwargs):
+def add_interface_response(resps, url, text='', **kwargs):
     full_url = METADATA_URL + 'network/interfaces/macs/' + example_mac + url
     resps.add(responses.GET, full_url, body=text, **kwargs)
 
@@ -259,3 +259,38 @@ def test_network_interface_security_group_ids(resps):
 def test_network_interface_subnet_id(resps):
     add_interface_response(resps, '/subnet-id', 'subnet-12345678')
     assert NetworkInterface(example_mac).subnet_id == 'subnet-12345678'
+
+
+def test_network_interface_subnet_ipv4_cidr_block(resps):
+    add_interface_response(resps, '/subnet-ipv4-cidr-block', '172.30.0.0/24')
+    assert NetworkInterface(example_mac).subnet_ipv4_cidr_block == '172.30.0.0/24'
+
+
+def test_network_interface_subnet_ipv4_cidr_block_none(resps):
+    add_interface_response(resps, '/subnet-ipv4-cidr-block', status=404)
+    assert NetworkInterface(example_mac).subnet_ipv4_cidr_block is None
+
+
+def test_network_interface_vpc_id(resps):
+    add_interface_response(resps, '/vpc-id', 'vpc-12345678')
+    assert NetworkInterface(example_mac).vpc_id == 'vpc-12345678'
+
+
+def test_network_interface_vpc_ipv4_cidr_block(resps):
+    add_interface_response(resps, '/vpc-ipv4-cidr-block', '172.30.0.0/16')
+    assert NetworkInterface(example_mac).vpc_ipv4_cidr_block == '172.30.0.0/16'
+
+
+def test_network_interface_vpc_ipv4_cidr_block_none(resps):
+    add_interface_response(resps, '/vpc-ipv4-cidr-block', status=404)
+    assert NetworkInterface(example_mac).vpc_ipv4_cidr_block is None
+
+
+def test_network_interface_vpc_ipv4_cidr_blocks(resps):
+    add_interface_response(resps, '/vpc-ipv4-cidr-blocks', '172.30.0.0/16')
+    assert NetworkInterface(example_mac).vpc_ipv4_cidr_blocks == ['172.30.0.0/16']
+
+
+def test_network_interface_vpc_ipv4_cidr_blocks_none(resps):
+    add_interface_response(resps, '/vpc-ipv4-cidr-blocks', status=404)
+    assert NetworkInterface(example_mac).vpc_ipv4_cidr_blocks == []

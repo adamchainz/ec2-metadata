@@ -178,5 +178,45 @@ class NetworkInterface(BaseLazyObject):
     def subnet_id(self):
         return requests.get(self._url('subnet-id')).text
 
+    @cached_property
+    def subnet_ipv4_cidr_block(self):
+        resp = requests.get(self._url('subnet-ipv4-cidr-block'))
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.text
+
+    # No IPV6 instances at hand to test this on, so I only know you get 404 in
+    # case there are none
+    # @cached_property
+    # def subnet_ipv6_cidr_blocks(self):
+    #     pass
+
+    @cached_property
+    def vpc_id(self):
+        return requests.get(self._url('vpc-id')).text
+
+    @cached_property
+    def vpc_ipv4_cidr_block(self):
+        resp = requests.get(self._url('vpc-ipv4-cidr-block'))
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.text
+
+    @cached_property
+    def vpc_ipv4_cidr_blocks(self):
+        resp = requests.get(self._url('vpc-ipv4-cidr-blocks'))
+        if resp.status_code == 404:
+            return []
+        else:
+            return resp.text.splitlines()
+
+    # No IPV6 at hand to test this on, so I only know you get 404 in case there
+    # are none
+    # @cached_property
+    # def vpc_ipv6_cidr_blocks(self):
+    #     pass
+
 
 ec2_metadata = EC2Metadata()

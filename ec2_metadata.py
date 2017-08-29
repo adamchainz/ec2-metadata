@@ -81,11 +81,19 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def public_hostname(self):
-        return requests.get(METADATA_URL + 'public-hostname').text
+        resp = requests.get(METADATA_URL + 'public-hostname')
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.text
 
     @cached_property
     def public_ipv4(self):
-        return requests.get(METADATA_URL + 'public-ipv4').text
+        resp = requests.get(METADATA_URL + 'public-ipv4')
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.text
 
     @cached_property
     def region(self):
@@ -160,11 +168,19 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def public_hostname(self):
-        return requests.get(self._url('public-hostname')).text
+        resp = requests.get(self._url('public-hostname'))
+        if resp.status_code == 404:
+            return None
+        else:
+            return resp.text
 
     @cached_property
     def public_ipv4s(self):
-        return requests.get(self._url('public-ipv4s')).text.splitlines()
+        resp = requests.get(self._url('public-ipv4s'))
+        if resp.status_code == 404:
+            return []
+        else:
+            return resp.text.splitlines()
 
     @cached_property
     def security_groups(self):

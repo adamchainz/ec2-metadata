@@ -20,7 +20,7 @@ def resps():
         yield resps
 
 
-def add_response(resps, url, text, **kwargs):
+def add_response(resps, url, text='', **kwargs):
     if url.startswith('http://'):
         full_url = url
     else:
@@ -139,9 +139,19 @@ def test_public_hostname(resps):
     assert ec2_metadata.public_hostname == 'ec2-1-2-3-4.compute-1.amazonaws.com'
 
 
+def test_public_hostname_none(resps):
+    add_response(resps, 'public-hostname', status=404)
+    assert ec2_metadata.public_hostname is None
+
+
 def test_public_ipv4(resps):
     add_response(resps, 'public-ipv4', '1.2.3.4')
     assert ec2_metadata.public_ipv4 == '1.2.3.4'
+
+
+def test_public_ipv4_none(resps):
+    add_response(resps, 'public-ipv4', status=404)
+    assert ec2_metadata.public_ipv4 is None
 
 
 def test_region(resps):
@@ -241,9 +251,19 @@ def test_network_interface_public_hostname(resps):
     assert NetworkInterface(example_mac).public_hostname == ''
 
 
+def test_network_interface_public_hostname_none(resps):
+    add_interface_response(resps, '/public-hostname', status=404)
+    assert NetworkInterface(example_mac).public_hostname is None
+
+
 def test_network_interface_public_ipv4s(resps):
     add_interface_response(resps, '/public-ipv4s', '54.0.0.0\n54.0.0.1')
     assert NetworkInterface(example_mac).public_ipv4s == ['54.0.0.0', '54.0.0.1']
+
+
+def test_network_interface_public_ipv4s_empty(resps):
+    add_interface_response(resps, '/public-ipv4s', status=404)
+    assert NetworkInterface(example_mac).public_ipv4s == []
 
 
 def test_network_interface_security_groups(resps):

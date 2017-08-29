@@ -149,14 +149,14 @@ The private IPv4 of the instance, e.g. ``'172.30.0.0'``.
 ``public_hostname: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-The public DNS hostname of the instance, e.g.
-``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
+The public DNS hostname of the instance, or ``None`` if the instance is not
+public, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
 
 ``public_ipv4: str``
 ~~~~~~~~~~~~~~~~~~~~
 
-The public IPv4 address of the instance, e.g.
-``'1.2.3.4'``.
+The public IPv4 address of the instance, or ``None`` if the instance is not
+public, e.g. ``'1.2.3.4'``.
 
 ``region: str``
 ~~~~~~~~~~~~~~~

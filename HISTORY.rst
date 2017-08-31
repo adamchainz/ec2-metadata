@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.2.1 (2017-08-31)
+------------------
+
 * Make ``public_*`` properties return ``None` for instances that aren't public.
 
 1.2.0 (2017-08-26)

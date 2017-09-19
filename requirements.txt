@@ -26,5 +26,5 @@ pytest-cov==2.5.1
 pytest==3.2.2
 requests==2.18.4
 responses==0.7.0
-six==1.10.0               # via mock, responses
+six==1.11.0               # via mock, responses
 urllib3==1.22             # via requests

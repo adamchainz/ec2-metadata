@@ -8,6 +8,11 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.3.1 (2017-10-17)
+------------------
+
+* Fix rendering of docs on PyPI.
+
 1.3.0 (2017-10-17)
 ------------------
 

@@ -23,14 +23,19 @@ class BaseLazyObject(object):
 
     def clear_all(self):
         for key in tuple(self.__dict__.keys()):
-            if isinstance(getattr(self.__class__, key), cached_property):
+            if isinstance(getattr(self.__class__, key, None), cached_property):
                 del self.__dict__[key]
 
 
 class EC2Metadata(BaseLazyObject):
 
+    def __init__(self, session=None):
+        if session is None:
+            session = requests.Session()
+        self._session = session
+
     def _get_url(self, url, raise_for_status=True):
-        resp = requests.get(url)
+        resp = self._session.get(url)
         if raise_for_status:
             resp.raise_for_status()
         return resp

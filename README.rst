@@ -45,8 +45,8 @@ library.
 API
 ===
 
-``EC2Metadata``
----------------
+``EC2Metadata(session=None)``
+-----------------------------
 
 A container that represents the data available on the EC2 metadata service.
 Attributes don't entirely correspond to the paths in the metadata service -
@@ -62,6 +62,9 @@ cover 90% of use cases. Use it like:
 
     from ec2_metadata import ec2_metadata
     ec2_metadata.region
+
+The ``session`` argument, if provided, should be an instance of
+``requests.Session``, allowing you to customize the way requests are made.
 
 All the attributes cache on first access, since they are mostly immutable, or
 at least require an instance stop to change, however some properties like

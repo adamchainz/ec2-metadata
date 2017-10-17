@@ -126,8 +126,8 @@ A dictionary of dynamic data - see `AWS docs
 
 The current instance's type, e.g. ``'t2.nano'``
 
-``mac: str``
-~~~~~~~~~~~~
+``mac : str``
+~~~~~~~~~~~~~
 
 The instance's MAC address, e.g. ``'0a:d2:ae:4d:f3:12'``
 
@@ -138,8 +138,8 @@ A dictionary of mac address to ``NetworkInterface``, which represents the data
 available on a network interface - see below. E.g.
 ``{'01:23:45:67:89:ab': NetworkInterface('01:23:45:67:89:ab')}``
 
-``private_hostname: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~
+``private_hostname : str``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The private IPv4 DNS hostname of the instance, e.g.
 ``'ip-172-30-0-0.eu-west-1.compute.internal'`` .
@@ -149,8 +149,8 @@ The private IPv4 DNS hostname of the instance, e.g.
 
 The private IPv4 of the instance, e.g. ``'172.30.0.0'``.
 
-``public_hostname: str``
-~~~~~~~~~~~~~~~~~~~~~~~~
+``public_hostname : str``
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The public DNS hostname of the instance, or ``None`` if the instance is not
 public, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
@@ -172,8 +172,8 @@ The region the instance is running in, e.g. ``'eu-west-1'``.
 The ID of the reservation used to launch the instance, e.g.
 ``'r-12345678901234567'``.
 
-``security_groups: List[str]``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``security_groups : List[str]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
 

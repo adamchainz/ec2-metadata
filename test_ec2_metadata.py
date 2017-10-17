@@ -4,6 +4,7 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 import json
 
 import pytest
+import requests
 import responses
 
 from ec2_metadata import DYNAMIC_URL, METADATA_URL, USERDATA_URL, NetworkInterface, ec2_metadata
@@ -59,6 +60,12 @@ def add_identity_doc_response(resps, overrides=None):
 def test_account_id(resps):
     add_identity_doc_response(resps, {'accountId': '1234'})
     assert ec2_metadata.account_id == '1234'
+
+
+def test_account_id_error(resps):
+    add_response(resps, DYNAMIC_URL + 'instance-identity/document', status=500)
+    with pytest.raises(requests.exceptions.HTTPError):
+        ec2_metadata.account_id
 
 
 def test_ami_id(resps):
@@ -121,7 +128,7 @@ def test_mac(resps):
 
 def test_network_interfaces(resps):
     add_response(resps, 'network/interfaces/macs/', example_mac + '/')
-    assert ec2_metadata.network_interfaces == {example_mac: NetworkInterface(example_mac)}
+    assert ec2_metadata.network_interfaces == {example_mac: NetworkInterface(example_mac, ec2_metadata)}
 
 
 def test_private_hostname(resps):

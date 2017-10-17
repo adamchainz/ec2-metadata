@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.3.0 (2017-10-17)
+------------------
+
 * All methods can now raise ``requests.exceptions.HTTPError`` if the metadata
   API returns a bad response, rather than failing during parsing or silently
   returning data from non-200 responses.

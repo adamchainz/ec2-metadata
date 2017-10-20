@@ -126,6 +126,15 @@ class EC2Metadata(BaseLazyObject):
         else:
             return resp.content
 
+    @cached_property
+    def instance_profile_arn(self):
+        resp = self._get_url(METADATA_URL + 'iam/info').json()
+        return resp['InstanceProfileArn']
+
+    @cached_property
+    def instance_profile_id(self):
+        resp = self._get_url(METADATA_URL + 'iam/info').json()
+        return resp['InstanceProfileId']
 
 class NetworkInterface(BaseLazyObject):
 

@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Add ``iam_info``, ``instance_profile_arn`` and ``instance_profile_id``
+  attributes
+
 1.3.1 (2017-10-17)
 ------------------
 

@@ -106,6 +106,22 @@ def test_availability_zone(resps):
     assert ec2_metadata.availability_zone == 'eu-west-1a'
 
 
+def test_iam_info(resps):
+    add_response(resps, 'iam/info', '{}')
+    assert ec2_metadata.iam_info == {}
+
+
+def test_iam_info_none(resps):
+    add_response(resps, 'iam/info', status=404)
+    assert ec2_metadata.iam_info is None
+
+
+def test_iam_info_unexpected(resps):
+    add_response(resps, 'iam/info', status=500)
+    with pytest.raises(requests.exceptions.HTTPError):
+        ec2_metadata.iam_info
+
+
 def test_instance_id(resps):
     add_response(resps, 'instance-id', 'i-12345678')
     assert ec2_metadata.instance_id == 'i-12345678'
@@ -114,6 +130,26 @@ def test_instance_id(resps):
 def test_instance_identity(resps):
     identity_doc = add_identity_doc_response(resps)
     assert ec2_metadata.instance_identity_document == identity_doc
+
+
+def test_instance_profile_arn(resps):
+    add_response(resps, 'iam/info', '{"InstanceProfileArn": "arn:foobar"}')
+    assert ec2_metadata.instance_profile_arn == 'arn:foobar'
+
+
+def test_instance_profile_arn_none(resps):
+    add_response(resps, 'iam/info', status=404)
+    assert ec2_metadata.instance_profile_arn is None
+
+
+def test_instance_profile_id(resps):
+    add_response(resps, 'iam/info', '{"InstanceProfileId": "some-id"}')
+    assert ec2_metadata.instance_profile_id == 'some-id'
+
+
+def test_instance_profile_id_none(resps):
+    add_response(resps, 'iam/info', status=404)
+    assert ec2_metadata.instance_profile_id is None
 
 
 def test_instance_type(resps):

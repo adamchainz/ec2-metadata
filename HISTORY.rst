@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.4.0 (2017-10-24)
+------------------
+
 * Add ``iam_info``, ``instance_profile_arn`` and ``instance_profile_id``
   attributes
 * Refactor handling non-200 responses to be more strict for attributes where

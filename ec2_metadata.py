@@ -34,9 +34,9 @@ class EC2Metadata(BaseLazyObject):
             session = requests.Session()
         self._session = session
 
-    def _get_url(self, url, raise_for_status=True):
+    def _get_url(self, url, allow_404=False):
         resp = self._session.get(url)
-        if raise_for_status:
+        if resp.status_code != 404 or not allow_404:
             resp.raise_for_status()
         return resp
 
@@ -62,12 +62,10 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def iam_info(self):
-        resp = self._get_url(METADATA_URL + 'iam/info', raise_for_status=False)
+        resp = self._get_url(METADATA_URL + 'iam/info', allow_404=True)
         if resp.status_code == 404:
             return None
-        elif resp.status_code == 200:
-            return resp.json()
-        resp.raise_for_status()
+        return resp.json()
 
     @cached_property
     def instance_id(self):
@@ -115,19 +113,17 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def public_hostname(self):
-        resp = self._get_url(METADATA_URL + 'public-hostname', raise_for_status=False)
+        resp = self._get_url(METADATA_URL + 'public-hostname', allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.text
+        return resp.text
 
     @cached_property
     def public_ipv4(self):
-        resp = self._get_url(METADATA_URL + 'public-ipv4', raise_for_status=False)
+        resp = self._get_url(METADATA_URL + 'public-ipv4', allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.text
+        return resp.text
 
     @cached_property
     def region(self):
@@ -143,11 +139,10 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def user_data(self):
-        resp = self._get_url(USERDATA_URL, raise_for_status=False)
+        resp = self._get_url(USERDATA_URL, allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.content
+        return resp.content
 
 
 class NetworkInterface(BaseLazyObject):
@@ -210,19 +205,17 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def public_hostname(self):
-        resp = self.parent._get_url(self._url('public-hostname'), raise_for_status=False)
+        resp = self.parent._get_url(self._url('public-hostname'), allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.text
+        return resp.text
 
     @cached_property
     def public_ipv4s(self):
-        resp = self.parent._get_url(self._url('public-ipv4s'), raise_for_status=False)
+        resp = self.parent._get_url(self._url('public-ipv4s'), allow_404=True)
         if resp.status_code == 404:
             return []
-        else:
-            return resp.text.splitlines()
+        return resp.text.splitlines()
 
     @cached_property
     def security_groups(self):
@@ -238,11 +231,10 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def subnet_ipv4_cidr_block(self):
-        resp = self.parent._get_url(self._url('subnet-ipv4-cidr-block'), raise_for_status=False)
+        resp = self.parent._get_url(self._url('subnet-ipv4-cidr-block'), allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.text
+        return resp.text
 
     # No IPV6 instances at hand to test this on, so I only know you get 404 in
     # case there are none
@@ -256,19 +248,17 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def vpc_ipv4_cidr_block(self):
-        resp = self.parent._get_url(self._url('vpc-ipv4-cidr-block'), raise_for_status=False)
+        resp = self.parent._get_url(self._url('vpc-ipv4-cidr-block'), allow_404=True)
         if resp.status_code == 404:
             return None
-        else:
-            return resp.text
+        return resp.text
 
     @cached_property
     def vpc_ipv4_cidr_blocks(self):
-        resp = self.parent._get_url(self._url('vpc-ipv4-cidr-blocks'), raise_for_status=False)
+        resp = self.parent._get_url(self._url('vpc-ipv4-cidr-blocks'), allow_404=True)
         if resp.status_code == 404:
             return []
-        else:
-            return resp.text.splitlines()
+        return resp.text.splitlines()
 
     # No IPV6 at hand to test this on, so I only know you get 404 in case there
     # are none

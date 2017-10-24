@@ -10,6 +10,8 @@ Pending Release
 
 * Add ``iam_info``, ``instance_profile_arn`` and ``instance_profile_id``
   attributes
+* Refactor handling non-200 responses to be more strict for attributes where
+  404's are allowed.
 
 1.3.1 (2017-10-17)
 ------------------

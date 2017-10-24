@@ -61,12 +61,35 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(METADATA_URL + 'ami-manifest-path').text
 
     @cached_property
+    def iam_info(self):
+        resp = self._get_url(METADATA_URL + 'iam/info', raise_for_status=False)
+        if resp.status_code == 404:
+            return None
+        elif resp.status_code == 200:
+            return resp.json()
+        resp.raise_for_status()
+
+    @cached_property
     def instance_id(self):
         return self._get_url(METADATA_URL + 'instance-id').text
 
     @cached_property
     def instance_identity_document(self):
         return self._get_url(DYNAMIC_URL + 'instance-identity/document').json()
+
+    @property
+    def instance_profile_arn(self):
+        iam_info = self.iam_info
+        if iam_info is None:
+            return None
+        return iam_info['InstanceProfileArn']
+
+    @property
+    def instance_profile_id(self):
+        iam_info = self.iam_info
+        if iam_info is None:
+            return None
+        return iam_info['InstanceProfileId']
 
     @cached_property
     def instance_type(self):
@@ -126,15 +149,6 @@ class EC2Metadata(BaseLazyObject):
         else:
             return resp.content
 
-    @cached_property
-    def instance_profile_arn(self):
-        resp = self._get_url(METADATA_URL + 'iam/info').json()
-        return resp['InstanceProfileArn']
-
-    @cached_property
-    def instance_profile_id(self):
-        resp = self._get_url(METADATA_URL + 'iam/info').json()
-        return resp['InstanceProfileId']
 
 class NetworkInterface(BaseLazyObject):
 

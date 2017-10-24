@@ -110,6 +110,12 @@ EBS-backed AMI's.
 Clear all the cached attributes on the class, meaning their next access will
 re-fetch the data from the metadata API.
 
+``iam_info: dict``
+~~~~~~~~~~~~~~~~~~
+
+A dictionary of data for the IAM role attached to the instance, or ``None`` if
+no role is attached.
+
 ``instance_id: str``
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -120,6 +126,18 @@ The current instance's ID, e.g. ``'i-123456'``
 
 A dictionary of dynamic data - see `AWS docs
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`_.
+
+``instance_profile_arn: str``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ARN of the IAM role/instance profile attached to the instance, taken from
+``iam_info``, or ``None`` if no role is attached.
+
+``instance_profile_id: str``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The ID of the IAM role/instance profile attached to the instance, taken from
+``iam_info``, or ``None`` if no role is attached.
 
 ``instance_type: str``
 ~~~~~~~~~~~~~~~~~~~~~~

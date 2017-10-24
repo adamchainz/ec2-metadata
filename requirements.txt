@@ -12,7 +12,7 @@ cookies==2.2.1            # via responses
 coverage==4.4.1           # via pytest-cov
 docutils==0.14
 enum34==1.1.6             # via flake8
-flake8==3.4.1
+flake8==3.5.0
 funcsigs==1.0.2           # via mock
 idna==2.6                 # via requests
 mccabe==0.6.1             # via flake8
@@ -22,7 +22,7 @@ multilint==2.2.0
 pbr==3.1.1                # via mock
 py==1.4.34                # via pytest
 pycodestyle==2.3.1        # via flake8
-pyflakes==1.5.0           # via flake8
+pyflakes==1.6.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
 pytest==3.2.3

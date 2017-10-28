@@ -8,11 +8,13 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Add ``instance_action`` and ``kernel_id`` attributes.
+
 1.4.0 (2017-10-24)
 ------------------
 
 * Add ``iam_info``, ``instance_profile_arn`` and ``instance_profile_id``
-  attributes
+  attributes.
 * Refactor handling non-200 responses to be more strict for attributes where
   404's are allowed.
 

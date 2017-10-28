@@ -67,6 +67,10 @@ class EC2Metadata(BaseLazyObject):
             return None
         return resp.json()
 
+    @property
+    def instance_action(self):
+        return self._get_url(METADATA_URL + 'instance-action').text
+
     @cached_property
     def instance_id(self):
         return self._get_url(METADATA_URL + 'instance-id').text
@@ -92,6 +96,13 @@ class EC2Metadata(BaseLazyObject):
     @cached_property
     def instance_type(self):
         return self._get_url(METADATA_URL + 'instance-type').text
+
+    @cached_property
+    def kernel_id(self):
+        resp = self._get_url(METADATA_URL + 'kernel-id', allow_404=True)
+        if resp.status_code == 404:
+            return None
+        return resp.text
 
     @cached_property
     def mac(self):

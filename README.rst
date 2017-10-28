@@ -66,10 +66,13 @@ cover 90% of use cases. Use it like:
 The ``session`` argument, if provided, should be an instance of
 ``requests.Session``, allowing you to customize the way requests are made.
 
-All the attributes cache on first access, since they are mostly immutable, or
-at least require an instance stop to change, however some properties like
-network interfaces can change over the lifetime of an instance. If you want to
-clear the cache of one attribute you can just `del` it:
+Most of the attributes are cached, except where noted below. This is because
+they are mostly immutable, or at least require an instance stop to change.
+However some cached attributes do represent things that can change without an
+instance stop, but rarely do, such as network devices.
+
+The caching is done with ``@cached_property``, so they cache on first access.
+If you want to clear the cache of one attribute you can just `del` it:
 
 .. code-block:: python
 
@@ -116,6 +119,14 @@ re-fetch the data from the metadata API.
 A dictionary of data for the IAM role attached to the instance, or ``None`` if
 no role is attached.
 
+``instance_action: str``
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Uncached.** A state that notifies if the instance will reboot in preparation
+for bundling. See the `AWS docs
+<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories>`_
+for the valid values.
+
 ``instance_id: str``
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -143,6 +154,12 @@ The ID of the IAM role/instance profile attached to the instance, taken from
 ~~~~~~~~~~~~~~~~~~~~~~
 
 The current instance's type, e.g. ``'t2.nano'``
+
+``kernel_id: str``
+~~~~~~~~~~~~~~~~~~
+
+The current instance's kernel ID, or ``None`` if it doesn't have one, e.g.
+``'aki-dc9ed9af'``.
 
 ``mac : str``
 ~~~~~~~~~~~~~

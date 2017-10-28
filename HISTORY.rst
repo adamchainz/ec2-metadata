@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.4.0 (2017-10-29)
+------------------
+
 * Add ``instance_action`` and ``kernel_id`` attributes.
 
 1.4.0 (2017-10-24)

@@ -122,6 +122,11 @@ def test_iam_info_unexpected(resps):
         ec2_metadata.iam_info
 
 
+def test_instance_action(resps):
+    add_response(resps, 'instance-action', 'none')
+    assert ec2_metadata.instance_action == 'none'
+
+
 def test_instance_id(resps):
     add_response(resps, 'instance-id', 'i-12345678')
     assert ec2_metadata.instance_id == 'i-12345678'
@@ -155,6 +160,16 @@ def test_instance_profile_id_none(resps):
 def test_instance_type(resps):
     add_response(resps, 'instance-type', 't2.nano')
     assert ec2_metadata.instance_type == 't2.nano'
+
+
+def test_kernel_id(resps):
+    add_response(resps, 'kernel-id', 'aki-dc9ed9af')
+    assert ec2_metadata.kernel_id == 'aki-dc9ed9af'
+
+
+def test_kernel_id_none(resps):
+    add_response(resps, 'kernel-id', status=404)
+    assert ec2_metadata.kernel_id is None
 
 
 def test_mac(resps):

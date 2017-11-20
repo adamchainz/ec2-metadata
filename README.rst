@@ -239,7 +239,7 @@ private IP addresses associated with that public IP, for each public IP that is
 associated with the interface, e.g. ``{'54.0.0.1': ['172.30.0.0']}``.
 
 ``ipv6s: List[str]``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
 
 The IPv6 addresses associated with the interface, e.g.
 ``['2001:db8:abcd:ef00::1234']``.

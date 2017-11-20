@@ -289,6 +289,16 @@ def test_network_interface_ipv4_associations(resps):
     }
 
 
+def test_network_interface_ipv6s(resps):
+    add_interface_response(resps, '/ipv6s', '2001:db8:abcd:ef00:cbe5:798:aa26:169b\n2001:db8:abcd:ef00::f')
+    assert NetworkInterface(example_mac).ipv6s == ['2001:db8:abcd:ef00:cbe5:798:aa26:169b', '2001:db8:abcd:ef00::f']
+
+
+def test_network_interface_ipv6s_none(resps):
+    add_interface_response(resps, '/ipv6s', status=404)
+    assert NetworkInterface(example_mac).ipv6s == []
+
+
 def test_network_interface_owner_id(resps):
     add_interface_response(resps, '/owner-id', '123456789012')
     assert NetworkInterface(example_mac).owner_id == '123456789012'
@@ -349,6 +359,16 @@ def test_network_interface_subnet_ipv4_cidr_block_none(resps):
     assert NetworkInterface(example_mac).subnet_ipv4_cidr_block is None
 
 
+def test_network_interface_subnet_ipv6_cidr_blocks(resps):
+    add_interface_response(resps, '/subnet-ipv6-cidr-blocks', '2001:db8:abcd:ef00::/64')
+    assert NetworkInterface(example_mac).subnet_ipv6_cidr_blocks == ['2001:db8:abcd:ef00::/64']
+
+
+def test_network_interface_subnet_ipv6_cidr_blocks_none(resps):
+    add_interface_response(resps, '/subnet-ipv6-cidr-blocks', status=404)
+    assert NetworkInterface(example_mac).subnet_ipv6_cidr_blocks == []
+
+
 def test_network_interface_vpc_id(resps):
     add_interface_response(resps, '/vpc-id', 'vpc-12345678')
     assert NetworkInterface(example_mac).vpc_id == 'vpc-12345678'
@@ -372,3 +392,13 @@ def test_network_interface_vpc_ipv4_cidr_blocks(resps):
 def test_network_interface_vpc_ipv4_cidr_blocks_none(resps):
     add_interface_response(resps, '/vpc-ipv4-cidr-blocks', status=404)
     assert NetworkInterface(example_mac).vpc_ipv4_cidr_blocks == []
+
+
+def test_network_interface_vpc_ipv6_cidr_blocks(resps):
+    add_interface_response(resps, '/vpc-ipv6-cidr-blocks', '2001:db8:abcd:ef00::/56')
+    assert NetworkInterface(example_mac).vpc_ipv6_cidr_blocks == ['2001:db8:abcd:ef00::/56']
+
+
+def test_network_interface_vpc_ipv6_cidr_blocks_none(resps):
+    add_interface_response(resps, '/vpc-ipv6-cidr-blocks', status=404)
+    assert NetworkInterface(example_mac).vpc_ipv6_cidr_blocks == []

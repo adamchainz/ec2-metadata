@@ -196,11 +196,12 @@ class NetworkInterface(BaseLazyObject):
             associations[public_ip] = private_ips
         return associations
 
-    # No IPV6 instances at hand to test this on, so I only know you get 404 in
-    # case there are none
-    # @cached_property
-    # def ipv6s(self):
-    #     pass
+    @cached_property
+    def ipv6s(self):
+        resp = self.parent._get_url(self._url('ipv6s'), allow_404=True)
+        if resp.status_code == 404:
+            return []
+        return resp.text.splitlines()
 
     @cached_property
     def owner_id(self):
@@ -247,11 +248,12 @@ class NetworkInterface(BaseLazyObject):
             return None
         return resp.text
 
-    # No IPV6 instances at hand to test this on, so I only know you get 404 in
-    # case there are none
-    # @cached_property
-    # def subnet_ipv6_cidr_blocks(self):
-    #     pass
+    @cached_property
+    def subnet_ipv6_cidr_blocks(self):
+        resp = self.parent._get_url(self._url('subnet-ipv6-cidr-blocks'), allow_404=True)
+        if resp.status_code == 404:
+            return []
+        return resp.text.splitlines()
 
     @cached_property
     def vpc_id(self):
@@ -271,11 +273,12 @@ class NetworkInterface(BaseLazyObject):
             return []
         return resp.text.splitlines()
 
-    # No IPV6 at hand to test this on, so I only know you get 404 in case there
-    # are none
-    # @cached_property
-    # def vpc_ipv6_cidr_blocks(self):
-    #     pass
+    @cached_property
+    def vpc_ipv6_cidr_blocks(self):
+        resp = self.parent._get_url(self._url('vpc-ipv6-cidr-blocks'), allow_404=True)
+        if resp.status_code == 404:
+            return []
+        return resp.text.splitlines()
 
 
 ec2_metadata = EC2Metadata()

@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Add ``ipv6s``, ``subnet_ipv6_cidr_blocks``, and ``vpc_ipv6_cidr_blocks``
+  attributes to ``NetworkInterface``.
+
 1.4.0 (2017-10-29)
 ------------------
 

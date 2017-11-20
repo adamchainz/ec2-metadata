@@ -238,6 +238,12 @@ A dictionary mapping public IP addresses on the interface to the list of
 private IP addresses associated with that public IP, for each public IP that is
 associated with the interface, e.g. ``{'54.0.0.1': ['172.30.0.0']}``.
 
+``ipv6s: List[str]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The IPv6 addresses associated with the interface, e.g.
+``['2001:db8:abcd:ef00::1234']``.
+
 ``mac: str``
 ~~~~~~~~~~~~
 
@@ -296,6 +302,13 @@ The ID of the subnet in which the interface resides, e.g.
 The IPv4 CIDR block of the subnet in which the interface resides, e.g.
 ``'172.30.0.0/24'``.
 
+``subnet_ipv6_cidr_blocks: List[str]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The list of IPv6 CIDR blocks of the subnet in which the interface resides, e.g.
+``['2001:db8:abcd:ef00::/64']``. If the subnet does not have any IPv6 CIDR
+blocks or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
+
 ``vpc_id: str``
 ~~~~~~~~~~~~~~~
 
@@ -312,3 +325,10 @@ e.g. ``'172.30.0.0/16'``.
 
 The list of IPv4 CIDR blocks, or ``None`` if the instance isn't in a VPC, e.g.
 ``['172.30.0.0/16']``.
+
+``vpc_ipv6_cidr_blocks: List[str]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The list of IPv6 CIDR blocks of the VPC in which the interface resides, e.g.
+``['2001:db8:abcd:ef00::/56']``. If the VPC does not have any IPv6 CIDR blocks
+or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.

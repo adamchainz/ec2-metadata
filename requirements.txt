@@ -10,7 +10,7 @@ certifi==2018.1.18        # via requests
 chardet==3.0.4            # via requests
 configparser==3.5.0       # via flake8
 cookies==2.2.1            # via responses
-coverage==4.5             # via pytest-cov
+coverage==4.5.1           # via pytest-cov
 docutils==0.14
 enum34==1.1.6             # via flake8
 flake8==3.5.0

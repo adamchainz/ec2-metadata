@@ -21,7 +21,7 @@ isort==4.3.4
 mccabe==0.6.1             # via flake8
 mock==2.0.0               # via responses
 modernize==0.6
-multilint==2.2.0
+multilint==2.2.1
 pbr==3.1.1                # via mock
 pluggy==0.6.0             # via pytest
 py==1.5.2                 # via pytest

@@ -179,7 +179,7 @@ class NetworkInterface(BaseLazyObject):
         return '{base}network/interfaces/macs/{mac}/{item}'.format(
             base=METADATA_URL,
             mac=self.mac,
-            item=item
+            item=item,
         )
 
     @cached_property

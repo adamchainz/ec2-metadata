@@ -4,6 +4,7 @@
 #
 #    pip-compile --output-file requirements.txt requirements.in
 #
+atomicwrites==1.1.5       # via pytest
 attrs==18.1.0             # via pytest
 cached-property==1.4.2
 certifi==2018.4.16        # via requests
@@ -22,7 +23,7 @@ isort==4.3.4
 mccabe==0.6.1             # via flake8
 mock==2.0.0               # via responses
 modernize==0.6.1
-more-itertools==4.1.0     # via pytest
+more-itertools==4.2.0     # via pytest
 multilint==2.3.0
 pbr==4.0.3                # via mock
 pluggy==0.6.0             # via pytest
@@ -31,7 +32,7 @@ pycodestyle==2.3.1        # via flake8
 pyflakes==1.6.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
-pytest==3.5.1
+pytest==3.6.0
 requests==2.18.4
 responses==0.9.0
 six==1.11.0               # via mock, more-itertools, multilint, pytest, responses

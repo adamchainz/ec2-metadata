@@ -32,7 +32,7 @@ pycodestyle==2.3.1        # via flake8
 pyflakes==1.6.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
-pytest==3.6.1
+pytest==3.6.2
 requests==2.19.1
 responses==0.9.0
 six==1.11.0               # via mock, more-itertools, multilint, pytest, responses

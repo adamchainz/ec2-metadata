@@ -23,17 +23,19 @@ isort==4.3.4
 mccabe==0.6.1             # via flake8
 mock==2.0.0               # via responses
 modernize==0.6.1
-more-itertools==4.2.0     # via pytest
+more-itertools==4.3.0     # via pytest
 multilint==2.3.0
+pathlib2==2.3.2           # via pytest
 pbr==4.2.0                # via mock
-pluggy==0.6.0             # via pytest
+pluggy==0.7.1             # via pytest
 py==1.5.4                 # via pytest
 pycodestyle==2.3.1        # via flake8
 pyflakes==1.6.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.5.1
-pytest==3.6.4
+pytest==3.7.1
 requests==2.19.1
 responses==0.9.0
-six==1.11.0               # via mock, more-itertools, multilint, pytest, responses
+scandir==1.8              # via pathlib2
+six==1.11.0               # via mock, more-itertools, multilint, pathlib2, pytest, responses
 urllib3==1.23             # via requests

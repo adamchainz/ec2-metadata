@@ -36,6 +36,6 @@ pytest-cov==2.5.1
 pytest==3.7.1
 requests==2.19.1
 responses==0.9.0
-scandir==1.8              # via pathlib2
+scandir==1.9.0            # via pathlib2
 six==1.11.0               # via mock, more-itertools, multilint, pathlib2, pytest, responses
 urllib3==1.23             # via requests

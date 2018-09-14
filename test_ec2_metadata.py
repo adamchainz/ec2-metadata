@@ -279,6 +279,11 @@ def test_network_interface_device_number(resps):
     assert NetworkInterface(example_mac).device_number == 0
 
 
+def test_network_interface_interface_id(resps):
+    add_interface_response(resps, '/interface-id', 'eni-12345')
+    assert NetworkInterface(example_mac).interface_id == 'eni-12345'
+
+
 def test_network_interface_ipv4_associations(resps):
     add_interface_response(resps, '/public-ipv4s', '54.0.0.0\n54.0.0.1')
     add_interface_response(resps, '/ipv4-associations/54.0.0.0', '172.30.0.0')

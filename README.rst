@@ -123,7 +123,7 @@ no role is attached.
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Uncached.** A state that notifies if the instance will reboot in preparation
-for bundling. See the `AWS docs
+for bundling. See the `AWS docs section “Instance Metadata Categories”
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories>`_
 for the valid values.
 
@@ -135,7 +135,7 @@ The current instance's ID, e.g. ``'i-123456'``
 ``instance_identity_document: dict``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A dictionary of dynamic data - see `AWS docs
+A dictionary of dynamic data - see `AWS docs page “Instance Identity Documents”
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`_.
 
 ``instance_profile_arn: str``

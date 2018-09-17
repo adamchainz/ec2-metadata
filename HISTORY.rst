@@ -8,6 +8,9 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.7.0 (2018-09-17)
+------------------
+
 * Add ``interface_id`` to ``NetworkInterface``.
 
 1.6.0 (2017-11-20)

@@ -187,6 +187,10 @@ class NetworkInterface(BaseLazyObject):
         return int(self.parent._get_url(self._url('device-number')).text)
 
     @cached_property
+    def interface_id(self):
+        return self.parent._get_url(self._url('interface-id')).text
+
+    @cached_property
     def ipv4_associations(self):
         associations = {}
         for public_ip in self.public_ipv4s:

@@ -232,7 +232,7 @@ its ``clear_all()`` method.
 The unique device number associated with that interface, e.g. ``0``.
 
 ``interface_id: str``
-~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
 
 The unique id used to identify the Elastic Network Interface, e.g. ``'eni-12345'``.
 

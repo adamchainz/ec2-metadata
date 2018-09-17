@@ -8,6 +8,11 @@ Pending Release
 
 .. Insert new release notes below this line
 
+1.7.1 (2018-09-17)
+------------------
+
+* Fix doucmentation rendering on PyPI.
+
 1.7.0 (2018-09-17)
 ------------------
 

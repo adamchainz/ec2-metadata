@@ -6,7 +6,7 @@ from cached_property import cached_property
 
 __author__ = 'Adam Johnson'
 __email__ = 'me@adamj.eu'
-__version__ = '1.7.0'
+__version__ = '1.7.1'
 
 __all__ = ('ec2_metadata',)
 

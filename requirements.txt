@@ -6,6 +6,7 @@
 #
 atomicwrites==1.2.1       # via pytest
 attrs==18.2.0             # via pytest
+biscuits==0.1.1 ; python_version > '3.0'  # for responses
 cached-property==1.5.1
 certifi==2018.10.15       # via requests
 chardet==3.0.4            # via requests

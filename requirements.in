@@ -1,4 +1,3 @@
-biscuits ; python_version > '3.0'  # for responses
 cached-property
 docutils
 flake8
@@ -11,4 +10,4 @@ pygments
 pytest
 pytest-cov
 requests
-responses
+requests-mock

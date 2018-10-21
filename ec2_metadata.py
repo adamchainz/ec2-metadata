@@ -35,7 +35,7 @@ class EC2Metadata(BaseLazyObject):
         self._session = session
 
     def _get_url(self, url, allow_404=False):
-        resp = self._session.get(url)
+        resp = self._session.get(url, timeout=1.0)
         if resp.status_code != 404 or not allow_404:
             resp.raise_for_status()
         return resp

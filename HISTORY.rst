@@ -8,6 +8,8 @@ Pending Release
 
 .. Insert new release notes below this line
 
+* Use timeout of 1 second for requests to the metadata API.
+
 1.7.1 (2018-09-17)
 ------------------
 

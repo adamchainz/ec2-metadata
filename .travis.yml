@@ -1,16 +1,14 @@
 sudo: false
-dist: trusty
+dist: xenial
 
 language: python
-python: 3.6
+python: 3.7
 cache: pip
 
 notifications:
   email: false
 
-language: python
-
 install:
-  - pip install tox
+- pip install tox
 
 script: tox

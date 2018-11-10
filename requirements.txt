@@ -30,9 +30,9 @@ pycodestyle==2.4.0        # via flake8
 pyflakes==2.0.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.6.0
-pytest==3.9.2
+pytest==3.10.0
 requests-mock==1.5.2
-requests==2.20.0
+requests==2.20.1
 scandir==1.9.0            # via pathlib2
 six==1.11.0               # via more-itertools, multilint, pathlib2, pytest, requests-mock
-urllib3==1.24             # via requests
+urllib3==1.24.1           # via requests

@@ -10,7 +10,7 @@ cached-property==1.5.1
 certifi==2018.10.15       # via requests
 chardet==3.0.4            # via requests
 configparser==3.5.0       # via flake8
-coverage==4.5.1           # via pytest-cov
+coverage==4.5.2           # via pytest-cov
 docutils==0.14
 enum34==1.1.6             # via flake8
 flake8-commas==2.0.0
@@ -30,7 +30,7 @@ pycodestyle==2.4.0        # via flake8
 pyflakes==2.0.0           # via flake8
 pygments==2.2.0
 pytest-cov==2.6.0
-pytest==3.10.0
+pytest==4.0.0
 requests-mock==1.5.2
 requests==2.20.1
 scandir==1.9.0            # via pathlib2

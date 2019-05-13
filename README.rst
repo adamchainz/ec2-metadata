@@ -30,7 +30,7 @@ Use **pip**:
 
     pip install ec2-metadata
 
-Python 3.4+ supported.
+Python 3.5-3.7 supported.
 
 Why?
 ====

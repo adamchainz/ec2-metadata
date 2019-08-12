@@ -27,6 +27,11 @@ setup(
     author="Adam Johnson",
     author_email="me@adamj.eu",
     url="https://github.com/adamchainz/ec2-metadata",
+    project_urls={
+        "Changelog": (
+            "https://github.com/adamchainz/ec2-metadata/blob/master/HISTORY.rst"
+        )
+    },
     py_modules=["ec2_metadata"],
     include_package_data=True,
     install_requires=["cached-property", "requests"],

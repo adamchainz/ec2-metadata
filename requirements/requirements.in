@@ -1,5 +1,6 @@
 black ; python_version == '3.8.*'
 cached-property
+check-manifest ; python_version == '3.8.*'
 docutils
 flake8
 flake8-bugbear

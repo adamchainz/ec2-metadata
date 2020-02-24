@@ -31,7 +31,7 @@ Use **pip**:
 
 .. code-block:: sh
 
-    pip install ec2-metadata
+    python -m pip install ec2-metadata
 
 Python 3.5 to 3.8 supported.
 

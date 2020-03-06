@@ -24,7 +24,11 @@ example_token = "AABBCC"
 
 
 def _mock_token_request(requests_mock):
-    requests_mock.put('http://169.254.169.254/latest/api/token', headers={'X-aws-ec2-metadata-token-ttl-seconds': str(TOKEN_TTL_SECONDS)}, text=example_token)
+    requests_mock.put(
+        "http://169.254.169.254/latest/api/token",
+        headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},
+        text=example_token,
+    )
 
 
 def add_identity_doc_response(requests_mock, overrides=None):

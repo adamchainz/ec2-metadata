@@ -35,8 +35,13 @@ class EC2Metadata(BaseLazyObject):
         """
         now = time.time()
         if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
-            token = self._session.put('http://169.254.169.254/latest/api/token', headers={'X-aws-ec2-metadata-token-ttl-seconds': str(TOKEN_TTL_SECONDS)}).text
-            self._session.headers.update({'X-aws-ec2-metadata-token': token})
+            token = self._session.put(
+                "http://169.254.169.254/latest/api/token",
+                headers={
+                    "X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)
+                },
+            ).text
+            self._session.headers.update({"X-aws-ec2-metadata-token": token})
             self._token_updated_at = now
 
     def _get_url(self, url, allow_404=False):

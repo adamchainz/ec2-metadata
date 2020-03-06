@@ -1,4 +1,5 @@
 import requests
+import time
 from cached_property import cached_property
 
 __all__ = ("ec2_metadata",)
@@ -10,6 +11,7 @@ SERVICE_URL = "http://169.254.169.254/2016-09-02/"
 DYNAMIC_URL = SERVICE_URL + "dynamic/"
 METADATA_URL = SERVICE_URL + "meta-data/"
 USERDATA_URL = SERVICE_URL + "user-data/"
+TOKEN_TTL_SECONDS = 21600
 
 
 class BaseLazyObject(object):
@@ -24,8 +26,21 @@ class EC2Metadata(BaseLazyObject):
         if session is None:
             session = requests.Session()
         self._session = session
+        self._token_updated_at = 0
+
+    def _ensure_fresh_token(self):
+        """ Update the metadata token if needed.
+
+        Tokens are rotated 1 minute before they would expire.
+        """
+        now = time.time()
+        if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
+            token = self._session.put('http://169.254.169.254/latest/api/token', headers={'X-aws-ec2-metadata-token-ttl-seconds': str(TOKEN_TTL_SECONDS)}).text
+            self._session.headers.update({'X-aws-ec2-metadata-token': token})
+            self._token_updated_at = now
 
     def _get_url(self, url, allow_404=False):
+        self._ensure_fresh_token()
         resp = self._session.get(url, timeout=1.0)
         if resp.status_code != 404 or not allow_404:
             resp.raise_for_status()

@@ -5,6 +5,7 @@ from ec2_metadata import (
     DYNAMIC_URL,
     METADATA_URL,
     USERDATA_URL,
+    TOKEN_TTL_SECONDS,
     NetworkInterface,
     ec2_metadata,
 )
@@ -16,9 +17,14 @@ def clear_it():
 
 
 example_mac = "00:11:22:33:44:55"
+example_token = "AABBCC"
 
 
 # EC2Metadata tests
+
+
+def _mock_token_request(requests_mock):
+    requests_mock.put('http://169.254.169.254/latest/api/token', headers={'X-aws-ec2-metadata-token-ttl-seconds': str(TOKEN_TTL_SECONDS)}, text=example_token)
 
 
 def add_identity_doc_response(requests_mock, overrides=None):
@@ -35,6 +41,7 @@ def add_identity_doc_response(requests_mock, overrides=None):
     }
     if overrides:
         identity_doc.update(overrides)
+    _mock_token_request(requests_mock)
     requests_mock.get(DYNAMIC_URL + "instance-identity/document", json=identity_doc)
     return identity_doc
 
@@ -45,17 +52,20 @@ def test_account_id(requests_mock):
 
 
 def test_account_id_error(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(DYNAMIC_URL + "instance-identity/document", status_code=500)
     with pytest.raises(requests.exceptions.HTTPError):
         ec2_metadata.account_id
 
 
 def test_ami_id(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
     assert ec2_metadata.ami_id == "ami-12345678"
 
 
 def test_ami_id_cached(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
     ec2_metadata.ami_id
     requests_mock.get(METADATA_URL + "ami-id", status_code=500)
@@ -63,6 +73,7 @@ def test_ami_id_cached(requests_mock):
 
 
 def test_ami_id_cached_cleared(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
     ec2_metadata.ami_id
 
@@ -74,42 +85,50 @@ def test_ami_id_cached_cleared(requests_mock):
 
 
 def test_ami_launch_index(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "ami-launch-index", text="0")
     assert ec2_metadata.ami_launch_index == 0
 
 
 def test_ami_manifest_path(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "ami-manifest-path", text="(unknown)")
     assert ec2_metadata.ami_manifest_path == "(unknown)"
 
 
 def test_availability_zone(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "placement/availability-zone", text="eu-west-1a")
     assert ec2_metadata.availability_zone == "eu-west-1a"
 
 
 def test_iam_info(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "iam/info", text="{}")
     assert ec2_metadata.iam_info == {}
 
 
 def test_iam_info_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "iam/info", status_code=404)
     assert ec2_metadata.iam_info is None
 
 
 def test_iam_info_unexpected(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "iam/info", status_code=500)
     with pytest.raises(requests.exceptions.HTTPError):
         ec2_metadata.iam_info
 
 
 def test_instance_action(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "instance-action", text="none")
     assert ec2_metadata.instance_action == "none"
 
 
 def test_instance_id(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "instance-id", text="i-12345678")
     assert ec2_metadata.instance_id == "i-12345678"
 
@@ -120,6 +139,7 @@ def test_instance_identity(requests_mock):
 
 
 def test_instance_profile_arn(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(
         METADATA_URL + "iam/info", text='{"InstanceProfileArn": "arn:foobar"}'
     )
@@ -127,11 +147,13 @@ def test_instance_profile_arn(requests_mock):
 
 
 def test_instance_profile_arn_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "iam/info", status_code=404)
     assert ec2_metadata.instance_profile_arn is None
 
 
 def test_instance_profile_id(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(
         METADATA_URL + "iam/info", text='{"InstanceProfileId": "some-id"}'
     )
@@ -139,31 +161,37 @@ def test_instance_profile_id(requests_mock):
 
 
 def test_instance_profile_id_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "iam/info", status_code=404)
     assert ec2_metadata.instance_profile_id is None
 
 
 def test_instance_type(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "instance-type", text="t2.nano")
     assert ec2_metadata.instance_type == "t2.nano"
 
 
 def test_kernel_id(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "kernel-id", text="aki-dc9ed9af")
     assert ec2_metadata.kernel_id == "aki-dc9ed9af"
 
 
 def test_kernel_id_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "kernel-id", status_code=404)
     assert ec2_metadata.kernel_id is None
 
 
 def test_mac(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "mac", text=example_mac)
     assert ec2_metadata.mac == example_mac
 
 
 def test_network_interfaces(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "network/interfaces/macs/", text=example_mac + "/")
     assert ec2_metadata.network_interfaces == {
         example_mac: NetworkInterface(example_mac, ec2_metadata)
@@ -171,6 +199,7 @@ def test_network_interfaces(requests_mock):
 
 
 def test_private_hostname(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(
         METADATA_URL + "local-hostname", text="ip-172-30-0-0.eu-west-1.compute.internal"
     )
@@ -178,11 +207,13 @@ def test_private_hostname(requests_mock):
 
 
 def test_private_ipv4(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "local-ipv4", text="172.30.0.0")
     assert ec2_metadata.private_ipv4 == "172.30.0.0"
 
 
 def test_public_hostname(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(
         METADATA_URL + "public-hostname", text="ec2-1-2-3-4.compute-1.amazonaws.com"
     )
@@ -190,16 +221,19 @@ def test_public_hostname(requests_mock):
 
 
 def test_public_hostname_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "public-hostname", status_code=404)
     assert ec2_metadata.public_hostname is None
 
 
 def test_public_ipv4(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "public-ipv4", text="1.2.3.4")
     assert ec2_metadata.public_ipv4 == "1.2.3.4"
 
 
 def test_public_ipv4_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "public-ipv4", status_code=404)
     assert ec2_metadata.public_ipv4 is None
 
@@ -210,18 +244,21 @@ def test_region(requests_mock):
 
 
 def test_reservation_id(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "reservation-id", text="r-12345678901234567")
     assert ec2_metadata.reservation_id == "r-12345678901234567"
 
 
 def test_security_groups_single(requests_mock):
     # most common case: a single SG
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "security-groups", text="security-group-one")
     assert ec2_metadata.security_groups == ["security-group-one"]
 
 
 def test_security_groups_two(requests_mock):
     # another common case: multiple SGs
+    _mock_token_request(requests_mock)
     requests_mock.get(
         METADATA_URL + "security-groups", text="security-group-one\nsecurity-group-2"
     )
@@ -231,16 +268,19 @@ def test_security_groups_two(requests_mock):
 def test_security_groups_emptystring(requests_mock):
     # Check '' too. Can't create an instance without a SG on EC2 but we should
     # safely handle it, perhaps it's possible in e.g. OpenStack.
+    _mock_token_request(requests_mock)
     requests_mock.get(METADATA_URL + "security-groups", text="")
     assert ec2_metadata.security_groups == []
 
 
 def test_user_data_none(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(USERDATA_URL, status_code=404)
     assert ec2_metadata.user_data is None
 
 
 def test_user_data_something(requests_mock):
+    _mock_token_request(requests_mock)
     requests_mock.get(USERDATA_URL, content=b"foobar")
     assert ec2_metadata.user_data == b"foobar"
 
@@ -250,6 +290,7 @@ def test_user_data_something(requests_mock):
 
 def add_interface_response(requests_mock, url, text="", **kwargs):
     full_url = METADATA_URL + "network/interfaces/macs/" + example_mac + url
+    _mock_token_request(requests_mock)
     requests_mock.get(full_url, text=text, **kwargs)
 
 

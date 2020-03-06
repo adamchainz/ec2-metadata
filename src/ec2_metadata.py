@@ -1,5 +1,6 @@
-import requests
 import time
+
+import requests
 from cached_property import cached_property
 
 __all__ = ("ec2_metadata",)

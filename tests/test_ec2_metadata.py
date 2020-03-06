@@ -4,8 +4,8 @@ import requests
 from ec2_metadata import (
     DYNAMIC_URL,
     METADATA_URL,
-    USERDATA_URL,
     TOKEN_TTL_SECONDS,
+    USERDATA_URL,
     NetworkInterface,
     ec2_metadata,
 )

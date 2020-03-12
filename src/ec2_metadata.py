@@ -6,13 +6,17 @@ from cached_property import cached_property
 __all__ = ("ec2_metadata",)
 
 
-# We purposefully use a fixed version of the service rather than 'latest' in
-# case any backward incompatible changes are made in the future
-SERVICE_URL = "http://169.254.169.254/2016-09-02/"
+# Previously we used a fixed version of the service, rather than 'latest', in
+# case any backward incompatible changes were made. It seems metadata service
+# v2 only operates with 'latest' at time of writing (2020-02-12).
+SERVICE_URL = "http://169.254.169.254/latest/"
 DYNAMIC_URL = SERVICE_URL + "dynamic/"
 METADATA_URL = SERVICE_URL + "meta-data/"
 USERDATA_URL = SERVICE_URL + "user-data/"
+# Max TTL:
 TOKEN_TTL_SECONDS = 21600
+TOKEN_HEADER = "X-aws-ec2-metadata-token"
+TOKEN_HEADER_TTL = "X-aws-ec2-metadata-token-ttl-seconds"
 
 
 class BaseLazyObject(object):
@@ -29,28 +33,32 @@ class EC2Metadata(BaseLazyObject):
         self._session = session
         self._token_updated_at = 0
 
-    def _ensure_fresh_token(self):
-        """ Update the metadata token if needed.
-
-        Tokens are rotated 1 minute before they would expire.
-        """
+    def _ensure_token_is_fresh(self):
         now = time.time()
+        # Refresh up to 60 seconds before expiry
         if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
-            token = self._session.put(
-                "http://169.254.169.254/latest/api/token",
-                headers={
-                    "X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)
-                },
-            ).text
-            self._session.headers.update({"X-aws-ec2-metadata-token": token})
+            token_response = self._session.put(
+                SERVICE_URL + "api/token",
+                headers={TOKEN_HEADER_TTL: str(TOKEN_TTL_SECONDS)},
+                timeout=5.0,
+            )
+            if token_response.status_code != 200:
+                token_response.raise_for_status()
+            token = token_response.text
+            self._session.headers.update({TOKEN_HEADER: token})
             self._token_updated_at = now
 
     def _get_url(self, url, allow_404=False):
-        self._ensure_fresh_token()
+        self._ensure_token_is_fresh()
         resp = self._session.get(url, timeout=1.0)
         if resp.status_code != 404 or not allow_404:
             resp.raise_for_status()
         return resp
+
+    def clear_all(self):
+        super().clear_all()
+        self._session.headers.pop(TOKEN_HEADER, None)
+        self._token_updated_at = 0
 
     @property
     def account_id(self):

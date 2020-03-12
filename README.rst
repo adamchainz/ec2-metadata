@@ -11,7 +11,7 @@ ec2-metadata
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
     :target: https://github.com/python/black
 
-An easy interface to query the EC2 metadata API, with caching.
+An easy interface to query the EC2 metadata API (version 2), with caching.
 
 A quick example:
 
@@ -44,6 +44,18 @@ been ported to ``boto3``, as per `this issue
 <https://github.com/boto/boto3/issues/313>`_. I thought that rather than
 building a new version inside ``boto3`` it would work well as a standalone
 library.
+
+Instance Metadata Service Version 2
+===================================
+
+In November 2019, AWS released
+`version 2 <https://aws.amazon.com/blogs/security/defense-in-depth-open-firewalls-reverse-proxies-ssrf-vulnerabilities-ec2-instance-metadata-service/>`__
+of the instance metadata service. It's more secure against Server Side Request
+Forgery (SSRF) attacks.
+
+``ec2-metadata`` now uses it exclusively. You can therefore consider disabling
+version 1, as per
+`AWS' guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-transition-to-version-2>`__.
 
 API
 ===
@@ -114,7 +126,8 @@ EBS-backed AMI's.
 ~~~~~~~~~~~~~~~~~~~~~~~
 
 Clear all the cached attributes on the class, meaning their next access will
-re-fetch the data from the metadata API.
+re-fetch the data from the metadata API. This includes clearing the token used
+to authenticate with the service.
 
 ``iam_info: dict``
 ~~~~~~~~~~~~~~~~~~

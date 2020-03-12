@@ -3,6 +3,9 @@
 History
 -------
 
+* Move to use Instance Metadata Service version 2. See the README for a note on
+  its increased security and porting to lock down the less secure version 1.
+
 2.1.0 (2019-12-19)
 ------------------
 

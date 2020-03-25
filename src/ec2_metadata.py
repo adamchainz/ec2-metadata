@@ -19,7 +19,7 @@ TOKEN_HEADER = "X-aws-ec2-metadata-token"
 TOKEN_HEADER_TTL = "X-aws-ec2-metadata-token-ttl-seconds"
 
 
-class BaseLazyObject(object):
+class BaseLazyObject:
     def clear_all(self):
         for key in tuple(self.__dict__.keys()):
             if isinstance(getattr(self.__class__, key, None), cached_property):

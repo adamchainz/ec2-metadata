@@ -2,8 +2,8 @@
 ec2-metadata
 ============
 
-.. image:: https://img.shields.io/travis/adamchainz/ec2-metadata/master.svg
-        :target: https://travis-ci.org/adamchainz/ec2-metadata
+.. image:: https://github.com/adamchainz/ec2-metadata/workflows/CI/badge.svg?branch=master
+        :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
 .. image:: https://img.shields.io/pypi/v/ec2-metadata.svg
         :target: https://pypi.python.org/pypi/ec2-metadata

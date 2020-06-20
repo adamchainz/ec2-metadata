@@ -6,7 +6,7 @@ ec2-metadata
    :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
 .. image:: https://img.shields.io/pypi/v/ec2-metadata.svg
-   :target: https://pypi.python.org/pypi/ec2-metadata
+   :target: https://pypi.org/project/ec2-metadata/
 
 .. image:: https://img.shields.io/badge/code%20style-black-000000.svg
    :target: https://github.com/python/black

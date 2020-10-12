@@ -2,16 +2,16 @@
 ec2-metadata
 ============
 
-.. image:: https://github.com/adamchainz/ec2-metadata/workflows/CI/badge.svg?branch=master
+.. image:: https://img.shields.io/github/workflow/status/adamchainz/ec2-metadata/CI/master?style=for-the-badge
    :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
-.. image:: https://img.shields.io/pypi/v/ec2-metadata.svg
+.. image:: https://img.shields.io/pypi/v/ec2-metadata.svg?style=for-the-badge
    :target: https://pypi.org/project/ec2-metadata/
 
-.. image:: https://img.shields.io/badge/code%20style-black-000000.svg
-   :target: https://github.com/python/black
+.. image:: https://img.shields.io/badge/code%20style-black-000000.svg?style=for-the-badge
+   :target: https://github.com/psf/black
 
-.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white
+.. image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white&style=for-the-badge
    :target: https://github.com/pre-commit/pre-commit
    :alt: pre-commit
 

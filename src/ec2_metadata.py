@@ -168,6 +168,10 @@ class EC2Metadata(BaseLazyObject):
     def security_groups(self):
         return self._get_url(METADATA_URL + "security-groups").text.splitlines()
 
+    @property
+    def spot_instance_action(self):
+        return self._get_url(METADATA_URL + "spot/instance-action").text
+
     @cached_property
     def user_data(self):
         resp = self._get_url(USERDATA_URL, allow_404=True)

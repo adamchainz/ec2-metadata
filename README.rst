@@ -5,6 +5,9 @@ ec2-metadata
 .. image:: https://img.shields.io/github/workflow/status/adamchainz/ec2-metadata/CI/master?style=for-the-badge
    :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
+.. image:: https://img.shields.io/coveralls/github/adamchainz/ec2-metadata/master?style=for-the-badge
+  :target: https://coveralls.io/r/adamchainz/ec2-metadata
+
 .. image:: https://img.shields.io/pypi/v/ec2-metadata.svg?style=for-the-badge
    :target: https://pypi.org/project/ec2-metadata/
 

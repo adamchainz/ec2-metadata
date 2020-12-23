@@ -7,6 +7,7 @@ from ec2_metadata import (
     SERVICE_URL,
     TOKEN_TTL_SECONDS,
     USERDATA_URL,
+    EC2Metadata,
     NetworkInterface,
     ec2_metadata,
 )
@@ -31,6 +32,12 @@ example_mac = "00:11:22:33:44:55"
 
 
 # EC2Metadata tests
+
+
+def test_custom_session(em_requests_mock):
+    EC2Metadata(session=requests.Session())
+    em_requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
+    assert ec2_metadata.ami_id == "ami-12345678"
 
 
 def add_identity_doc_response(em_requests_mock, overrides=None):

@@ -196,7 +196,7 @@ The current instance's kernel ID, or ``None`` if it doesn't have one, e.g.
 
 The instance's MAC address, e.g. ``'0a:d2:ae:4d:f3:12'``
 
-``network_interfaces: Dict[str, NetworkInterface]``
+``network_interfaces: dict[str, NetworkInterface]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary of mac address to ``NetworkInterface``, which represents the data
@@ -237,7 +237,7 @@ The region the instance is running in, e.g. ``'eu-west-1'``.
 The ID of the reservation used to launch the instance, e.g.
 ``'r-12345678901234567'``.
 
-``security_groups : List[str]``
+``security_groups : list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
@@ -266,14 +266,14 @@ The unique device number associated with that interface, e.g. ``0``.
 
 The unique id used to identify the Elastic Network Interface, e.g. ``'eni-12345'``.
 
-``ipv4_associations: Dict[str, List[str]]``
+``ipv4_associations: dict[str, list[str]]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary mapping public IP addresses on the interface to the list of
 private IP addresses associated with that public IP, for each public IP that is
 associated with the interface, e.g. ``{'54.0.0.1': ['172.30.0.0']}``.
 
-``ipv6s: List[str]``
+``ipv6s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~
 
 The IPv6 addresses associated with the interface, e.g.
@@ -296,7 +296,7 @@ The AWS Account ID of the owner of the network interface, e.g.
 The interface's local/private hostname, e.g.
 ``'ip-172-30-0-0.eu-west-1.compute.internal'``.
 
-``private_ipv4s: List[str]``
+``private_ipv4s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The private IPv4 addresses associated with the interface, e.g.
@@ -308,18 +308,18 @@ The private IPv4 addresses associated with the interface, e.g.
 The interface's public DNS (IPv4), e.g.
 ``'ec2-54-0-0-0.compute-1.amazonaws.com'``.
 
-``public_ipv4s: List[str]``
+``public_ipv4s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The Elastic IP addresses associated with the interface, e.g. ``['54.0.0.0']``.
 
-``security_groups: List[str]``
+``security_groups: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The names of the security groups to which the network interface belongs, e.g.
 ``['ssh-access', 'custom-sg-1']``.
 
-``security_group_ids: List[str]``
+``security_group_ids: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The names of the security groups to which the network interface belongs, e.g.
@@ -337,7 +337,7 @@ The ID of the subnet in which the interface resides, e.g.
 The IPv4 CIDR block of the subnet in which the interface resides, e.g.
 ``'172.30.0.0/24'``.
 
-``subnet_ipv6_cidr_blocks: List[str]``
+``subnet_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The list of IPv6 CIDR blocks of the subnet in which the interface resides, e.g.
@@ -355,13 +355,13 @@ The ID of the VPC in which the interface resides, e.g. ``'vpc-12345678'``.
 The IPv4 CIDR block of the VPC, or ``None`` if the instance isn't in a VPC,
 e.g. ``'172.30.0.0/16'``.
 
-``vpc_ipv4_cidr_blocks: List[str]``
+``vpc_ipv4_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The list of IPv4 CIDR blocks, or ``None`` if the instance isn't in a VPC, e.g.
 ``['172.30.0.0/16']``.
 
-``vpc_ipv6_cidr_blocks: List[str]``
+``vpc_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The list of IPv6 CIDR blocks of the VPC in which the interface resides, e.g.

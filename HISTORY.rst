@@ -2,6 +2,9 @@
 History
 =======
 
+2.4.0 (2021-05-13)
+------------------
+
 * Use ``functools.cached_property`` on Python 3.8+, removing the dependency on
   the ``cached-property`` package.
 

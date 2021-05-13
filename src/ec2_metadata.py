@@ -1,7 +1,12 @@
+import sys
 import time
 
 import requests
-from cached_property import cached_property
+
+if sys.version_info >= (3, 8):
+    from functools import cached_property
+else:
+    from cached_property import cached_property
 
 __all__ = ("ec2_metadata",)
 

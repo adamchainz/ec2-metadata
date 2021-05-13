@@ -2,6 +2,9 @@
 History
 =======
 
+* Use ``functools.cached_property`` on Python 3.8+, removing the dependency on
+  the ``cached-property`` package.
+
 * Stop distributing tests to reduce package size. Tests are not intended to be
   run outside of the tox setup in the repository. Repackagers can use GitHub's
   tarballs per tag.

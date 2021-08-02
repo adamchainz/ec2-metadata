@@ -125,6 +125,13 @@ The ID of the AMI used to launch the instance, e.g. ``'ami-123456'``.
 
 The name of the current AZ e.g. ``'eu-west-1a'``.
 
+``availability_zone_id: str``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The unique, cross-account ID of the current AZ e.g. ``'use1-az6'`` -
+see `AWS docs page “AZ IDs for your AWS resources”
+<https://docs.aws.amazon.com/ram/latest/userguide/working-with-az-ids.html>`_.
+
 ``ami_launch_index: int``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 

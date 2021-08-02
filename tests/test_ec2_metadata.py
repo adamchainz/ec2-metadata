@@ -119,6 +119,13 @@ def test_availability_zone(em_requests_mock):
     assert ec2_metadata.availability_zone == "eu-west-1a"
 
 
+def test_availability_zone_id(em_requests_mock):
+    em_requests_mock.get(
+        METADATA_URL + "placement/availability-zone-id", text="use1-az6"
+    )
+    assert ec2_metadata.availability_zone == "use1-az6"
+
+
 def test_iam_info(em_requests_mock):
     em_requests_mock.get(METADATA_URL + "iam/info", text="{}")
     assert ec2_metadata.iam_info == {}

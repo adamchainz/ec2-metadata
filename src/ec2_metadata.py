@@ -78,6 +78,10 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(METADATA_URL + "placement/availability-zone").text
 
     @cached_property
+    def availability_zone_id(self):
+        return self._get_url(METADATA_URL + "placement/availability-zone-id").text
+
+    @cached_property
     def ami_launch_index(self):
         return int(self._get_url(METADATA_URL + "ami-launch-index").text)
 

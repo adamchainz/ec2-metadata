@@ -190,7 +190,7 @@ class NetworkInterface(BaseLazyObject):
             self.parent = parent
 
     def __repr__(self):
-        return "NetworkInterface({mac})".format(mac=repr(self.mac))
+        return f"NetworkInterface({repr(self.mac)})"
 
     def __eq__(self, other):
         return (
@@ -216,7 +216,7 @@ class NetworkInterface(BaseLazyObject):
     def ipv4_associations(self):
         associations = {}
         for public_ip in self.public_ipv4s:
-            url = self._url("ipv4-associations/{}".format(public_ip))
+            url = self._url(f"ipv4-associations/{public_ip}")
             resp = self.parent._get_url(url)
             private_ips = resp.text.splitlines()
             associations[public_ip] = private_ips

@@ -22,7 +22,7 @@ An easy interface to query the EC2 metadata API (version 2), with caching.
 
 A quick example:
 
-.. code-block:: python
+.. code-block:: pycon
 
     >>> from ec2_metadata import ec2_metadata
     >>> print(ec2_metadata.region)
@@ -90,6 +90,7 @@ cover 90% of use cases. Use it like:
 .. code-block:: python
 
     from ec2_metadata import ec2_metadata
+
     ec2_metadata.region
 
 The ``session`` argument, if provided, should be an instance of

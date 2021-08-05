@@ -176,14 +176,14 @@ The current instance's ID, e.g. ``'i-123456'``
 A dictionary of dynamic data - see `AWS docs page “Instance Identity Documents”
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`_.
 
-``instance_profile_arn: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``instance_profile_arn: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ARN of the IAM role/instance profile attached to the instance, taken from
 ``iam_info``, or ``None`` if no role is attached.
 
-``instance_profile_id: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``instance_profile_id: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The ID of the IAM role/instance profile attached to the instance, taken from
 ``iam_info``, or ``None`` if no role is attached.
@@ -193,8 +193,8 @@ The ID of the IAM role/instance profile attached to the instance, taken from
 
 The current instance's type, e.g. ``'t2.nano'``
 
-``kernel_id: str``
-~~~~~~~~~~~~~~~~~~
+``kernel_id: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The current instance's kernel ID, or ``None`` if it doesn't have one, e.g.
 ``'aki-dc9ed9af'``.
@@ -222,14 +222,14 @@ The private IPv4 DNS hostname of the instance, e.g.
 
 The private IPv4 of the instance, e.g. ``'172.30.0.0'``.
 
-``public_hostname : str``
-~~~~~~~~~~~~~~~~~~~~~~~~~
+``public_hostname : str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The public DNS hostname of the instance, or ``None`` if the instance is not
 public, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
 
-``public_ipv4: str``
-~~~~~~~~~~~~~~~~~~~~
+``public_ipv4: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The public IPv4 address of the instance, or ``None`` if the instance is not
 public, e.g. ``'1.2.3.4'``.
@@ -250,8 +250,8 @@ The ID of the reservation used to launch the instance, e.g.
 
 List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
 
-``user_data: bytes``
-~~~~~~~~~~~~~~~~~~~~
+``user_data: bytes | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The raw user data assigned to the instance (not base64 encoded), or ``None`` if
 there is none.
@@ -310,8 +310,8 @@ The interface's local/private hostname, e.g.
 The private IPv4 addresses associated with the interface, e.g.
 ``['172.30.0.0']``.
 
-``public_hostname: str``
-~~~~~~~~~~~~~~~~~~~~~~~~
+``public_hostname: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The interface's public DNS (IPv4), e.g.
 ``'ec2-54-0-0-0.compute-1.amazonaws.com'``.
@@ -339,11 +339,11 @@ The names of the security groups to which the network interface belongs, e.g.
 The ID of the subnet in which the interface resides, e.g.
 ``'subnet-12345678'``.
 
-``subnet_ipv4_cidr_block: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``subnet_ipv4_cidr_block: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The IPv4 CIDR block of the subnet in which the interface resides, e.g.
-``'172.30.0.0/24'``.
+The IPv4 CIDR block of the subnet in which the interface resides, or ``None``
+if there is none, e.g. ``'172.30.0.0/24'``.
 
 ``subnet_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -357,8 +357,8 @@ blocks or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
 
 The ID of the VPC in which the interface resides, e.g. ``'vpc-12345678'``.
 
-``vpc_ipv4_cidr_block: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``vpc_ipv4_cidr_block: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The IPv4 CIDR block of the VPC, or ``None`` if the instance isn't in a VPC,
 e.g. ``'172.30.0.0/16'``.
@@ -366,8 +366,8 @@ e.g. ``'172.30.0.0/16'``.
 ``vpc_ipv4_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The list of IPv4 CIDR blocks, or ``None`` if the instance isn't in a VPC, e.g.
-``['172.30.0.0/16']``.
+The list of IPv4 CIDR blocks e.g. ``['172.30.0.0/16']``. If the interface
+doesn’t have any such CIDR blocks, the list will be empty.
 
 ``vpc_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

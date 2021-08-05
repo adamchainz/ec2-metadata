@@ -3,6 +3,7 @@ History
 =======
 
 * Add ``availability_zone_id`` attribute.
+* Add type hints.
 
 2.4.0 (2021-05-13)
 ------------------

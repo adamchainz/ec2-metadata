@@ -2,6 +2,9 @@
 History
 =======
 
+2.5.0 (2021-08-05)
+------------------
+
 * Add ``availability_zone_id`` attribute.
 * Add type hints.
 

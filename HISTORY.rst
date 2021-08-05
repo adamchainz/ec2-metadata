@@ -2,6 +2,8 @@
 History
 =======
 
+* Add ``availability_zone_id`` attribute.
+
 2.4.0 (2021-05-13)
 ------------------
 

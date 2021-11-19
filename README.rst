@@ -5,8 +5,8 @@ ec2-metadata
 .. image:: https://img.shields.io/github/workflow/status/adamchainz/ec2-metadata/CI/main?style=for-the-badge
    :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
-.. image:: https://img.shields.io/codecov/c/github/adamchainz/ec2-metadata/main?style=for-the-badge
-  :target: https://app.codecov.io/gh/adamchainz/ec2-metadata
+.. image:: https://img.shields.io/badge/Coverage-100%25-success?style=for-the-badge
+   :target: https://github.com/adamchainz/ec2-metadata/actions?workflow=CI
 
 .. image:: https://img.shields.io/pypi/v/ec2-metadata.svg?style=for-the-badge
    :target: https://pypi.org/project/ec2-metadata/

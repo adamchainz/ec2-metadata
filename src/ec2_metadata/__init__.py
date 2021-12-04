@@ -29,7 +29,6 @@ class EC2Metadata(BaseLazyObject):
     def __init__(
         self,
         session: Optional[requests.Session] = None,
-        ipv4: bool = True,
     ) -> None:
         if session is None:
             session = requests.Session()

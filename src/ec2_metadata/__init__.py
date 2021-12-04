@@ -107,6 +107,16 @@ class EC2Metadata(BaseLazyObject):
         return resp.json()
 
     @property
+    def iam_security_credentials(self) -> dict[str, Any] | None:
+        instance_profile_name = self.instance_profile_name
+        if instance_profile_name is None:
+            return None
+        resp = self._get_url(
+            f"{self.metadata_url}iam/security-credentials/{instance_profile_name}",
+        )
+        return resp.json()
+
+    @property
     def instance_action(self) -> str:
         return self._get_url(f"{self.metadata_url}instance-action").text
 
@@ -124,6 +134,13 @@ class EC2Metadata(BaseLazyObject):
         if iam_info is None:
             return None
         return iam_info["InstanceProfileArn"]
+
+    @property
+    def instance_profile_name(self) -> str | None:
+        instance_profile_arn = self.instance_profile_arn
+        if instance_profile_arn is None:
+            return None
+        return instance_profile_arn.split("/")[-1]
 
     @property
     def instance_profile_id(self) -> str | None:

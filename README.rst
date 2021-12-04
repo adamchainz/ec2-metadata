@@ -157,11 +157,20 @@ to authenticate with the service.
 The domain for AWS resources for the region. E.g. ``'amazonaws.com'`` for the
 standard AWS regions and GovCloud (US), or ``'amazonaws.com.cn'`` for China.
 
-``iam_info: dict``
-~~~~~~~~~~~~~~~~~~
+``iam_info: dict | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary of data for the IAM role attached to the instance, or ``None`` if
 no role is attached.
+
+``iam_security_credentials: dict | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A dictionary of data for the security credentials associated with the IAM role
+attached to the instance, or ``None`` if no role is attached. See the
+`AWS docs section “Retrieve security credentials from instance metadata“
+<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#instance-metadata-security-credentials>`_
+for more details.
 
 ``instance_action: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,6 +202,13 @@ The ARN of the IAM role/instance profile attached to the instance, taken from
 
 The ID of the IAM role/instance profile attached to the instance, taken from
 ``iam_info``, or ``None`` if no role is attached.
+
+
+``instance_profile_name: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The instance profile name (extracted from the ``instance_profile_arn``),
+or ``None`` if no role is attached.
 
 ``instance_type: str``
 ~~~~~~~~~~~~~~~~~~~~~~

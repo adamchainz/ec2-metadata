@@ -4,6 +4,15 @@ History
 
 * Support Python 3.10.
 
+* Default to using the IPv6 host for the metadata service.
+  On instances that don’t support IPv6, use an IPv4 instance of ``EC2Metadata`` with:
+
+  .. code-block:: python
+
+      from ec2_metadata import EC2Metadata
+
+      ec2_metadata = EC2Metadata(ipv4=True)
+
 2.5.0 (2021-08-05)
 ------------------
 

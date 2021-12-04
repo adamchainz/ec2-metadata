@@ -29,17 +29,22 @@ class EC2Metadata(BaseLazyObject):
     def __init__(
         self,
         session: Optional[requests.Session] = None,
-        ipv4: bool = True,
+        ipv4: bool = False,
     ) -> None:
         if session is None:
             session = requests.Session()
         self._session = session
         self._token_updated_at = 0.0
 
+        if ipv4:
+            host = "169.254.169.254"
+        else:
+            host = "[fd00:ec2::254]"
+
         # Previously we used a fixed version of the service, rather than 'latest', in
         # case any backward incompatible changes were made. It seems metadata service
         # v2 only operates with 'latest' at time of writing (2020-02-12).
-        self.service_url = "http://169.254.169.254/latest/"
+        self.service_url = f"http://{host}/latest/"
         self.dynamic_url = f"{self.service_url}dynamic/"
         self.metadata_url = f"{self.service_url}meta-data/"
         self.userdata_url = f"{self.service_url}user-data/"

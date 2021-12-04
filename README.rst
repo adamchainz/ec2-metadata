@@ -74,8 +74,8 @@ version 1, as per
 API
 ===
 
-``EC2Metadata(session=None)``
------------------------------
+``EC2Metadata(session: requests.Session | None = None, ipv4: bool = False)``
+----------------------------------------------------------------------------
 
 A container that represents the data available on the EC2 metadata service.
 Attributes don't entirely correspond to the paths in the metadata service -
@@ -85,7 +85,7 @@ service docs
 to understand the exact contents.
 
 There's a singleton instance of it at the name ``ec2_metadata`` which should
-cover 90% of use cases. Use it like:
+cover most use cases. Use it like:
 
 .. code-block:: python
 
@@ -95,6 +95,10 @@ cover 90% of use cases. Use it like:
 
 The ``session`` argument, if provided, should be an instance of
 ``requests.Session``, allowing you to customize the way requests are made.
+
+The ``ipv4`` argument controls whether to use the IPv6 or IPv4 host for the
+metadata service. By default, the IPv6 host is used. Pass ``ipv4=True`` to use
+the IPv4 host.
 
 Most of the attributes are cached, except where noted below. This is because
 they are mostly immutable, or at least require an instance stop to change.

@@ -12,13 +12,6 @@ else:
 __all__ = ("ec2_metadata",)
 
 
-# Previously we used a fixed version of the service, rather than 'latest', in
-# case any backward incompatible changes were made. It seems metadata service
-# v2 only operates with 'latest' at time of writing (2020-02-12).
-SERVICE_URL = "http://169.254.169.254/latest/"
-DYNAMIC_URL = SERVICE_URL + "dynamic/"
-METADATA_URL = SERVICE_URL + "meta-data/"
-USERDATA_URL = SERVICE_URL + "user-data/"
 # Max TTL:
 TOKEN_TTL_SECONDS = 21600
 TOKEN_HEADER = "X-aws-ec2-metadata-token"
@@ -33,18 +26,30 @@ class BaseLazyObject:
 
 
 class EC2Metadata(BaseLazyObject):
-    def __init__(self, session: Optional[requests.Session] = None) -> None:
+    def __init__(
+        self,
+        session: Optional[requests.Session] = None,
+        ipv4: bool = True,
+    ) -> None:
         if session is None:
             session = requests.Session()
         self._session = session
         self._token_updated_at = 0.0
+
+        # Previously we used a fixed version of the service, rather than 'latest', in
+        # case any backward incompatible changes were made. It seems metadata service
+        # v2 only operates with 'latest' at time of writing (2020-02-12).
+        self.service_url = "http://169.254.169.254/latest/"
+        self.dynamic_url = f"{self.service_url}dynamic/"
+        self.metadata_url = f"{self.service_url}meta-data/"
+        self.userdata_url = f"{self.service_url}user-data/"
 
     def _ensure_token_is_fresh(self) -> None:
         now = time.time()
         # Refresh up to 60 seconds before expiry
         if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
             token_response = self._session.put(
-                SERVICE_URL + "api/token",
+                f"{self.service_url}api/token",
                 headers={TOKEN_HEADER_TTL: str(TOKEN_TTL_SECONDS)},
                 timeout=5.0,
             )
@@ -72,42 +77,42 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def ami_id(self) -> str:
-        return self._get_url(METADATA_URL + "ami-id").text
+        return self._get_url(f"{self.metadata_url}ami-id").text
 
     @cached_property
     def availability_zone(self) -> str:
-        return self._get_url(METADATA_URL + "placement/availability-zone").text
+        return self._get_url(f"{self.metadata_url}placement/availability-zone").text
 
     @cached_property
     def availability_zone_id(self) -> str:
-        return self._get_url(METADATA_URL + "placement/availability-zone-id").text
+        return self._get_url(f"{self.metadata_url}placement/availability-zone-id").text
 
     @cached_property
     def ami_launch_index(self) -> int:
-        return int(self._get_url(METADATA_URL + "ami-launch-index").text)
+        return int(self._get_url(f"{self.metadata_url}ami-launch-index").text)
 
     @cached_property
     def ami_manifest_path(self) -> str:
-        return self._get_url(METADATA_URL + "ami-manifest-path").text
+        return self._get_url(f"{self.metadata_url}ami-manifest-path").text
 
     @cached_property
     def iam_info(self) -> Optional[Dict[str, Any]]:
-        resp = self._get_url(METADATA_URL + "iam/info", allow_404=True)
+        resp = self._get_url(f"{self.metadata_url}iam/info", allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.json()
 
     @property
     def instance_action(self) -> str:
-        return self._get_url(METADATA_URL + "instance-action").text
+        return self._get_url(f"{self.metadata_url}instance-action").text
 
     @cached_property
     def instance_id(self) -> str:
-        return self._get_url(METADATA_URL + "instance-id").text
+        return self._get_url(f"{self.metadata_url}instance-id").text
 
     @cached_property
     def instance_identity_document(self) -> Dict[str, Any]:
-        return self._get_url(DYNAMIC_URL + "instance-identity/document").json()
+        return self._get_url(f"{self.dynamic_url}instance-identity/document").json()
 
     @property
     def instance_profile_arn(self) -> Optional[str]:
@@ -125,43 +130,43 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def instance_type(self) -> str:
-        return self._get_url(METADATA_URL + "instance-type").text
+        return self._get_url(f"{self.metadata_url}instance-type").text
 
     @cached_property
     def kernel_id(self) -> Optional[str]:
-        resp = self._get_url(METADATA_URL + "kernel-id", allow_404=True)
+        resp = self._get_url(f"{self.metadata_url}kernel-id", allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
     def mac(self) -> str:
-        return self._get_url(METADATA_URL + "mac").text
+        return self._get_url(f"{self.metadata_url}mac").text
 
     @cached_property
     def network_interfaces(self) -> Dict[str, "NetworkInterface"]:
-        macs_text = self._get_url(METADATA_URL + "network/interfaces/macs/").text
+        macs_text = self._get_url(f"{self.metadata_url}network/interfaces/macs/").text
         macs = [line.rstrip("/") for line in macs_text.splitlines()]
         return {mac: NetworkInterface(mac, self) for mac in macs}
 
     @cached_property
     def private_hostname(self) -> str:
-        return self._get_url(METADATA_URL + "local-hostname").text
+        return self._get_url(f"{self.metadata_url}local-hostname").text
 
     @cached_property
     def private_ipv4(self) -> str:
-        return self._get_url(METADATA_URL + "local-ipv4").text
+        return self._get_url(f"{self.metadata_url}local-ipv4").text
 
     @cached_property
     def public_hostname(self) -> Optional[str]:
-        resp = self._get_url(METADATA_URL + "public-hostname", allow_404=True)
+        resp = self._get_url(f"{self.metadata_url}public-hostname", allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
     def public_ipv4(self) -> Optional[str]:
-        resp = self._get_url(METADATA_URL + "public-ipv4", allow_404=True)
+        resp = self._get_url(f"{self.metadata_url}public-ipv4", allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
@@ -172,15 +177,15 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def reservation_id(self) -> str:
-        return self._get_url(METADATA_URL + "reservation-id").text
+        return self._get_url(f"{self.metadata_url}reservation-id").text
 
     @cached_property
     def security_groups(self) -> List[str]:
-        return self._get_url(METADATA_URL + "security-groups").text.splitlines()
+        return self._get_url(f"{self.metadata_url}security-groups").text.splitlines()
 
     @cached_property
     def user_data(self) -> Optional[bytes]:
-        resp = self._get_url(USERDATA_URL, allow_404=True)
+        resp = self._get_url(self.userdata_url, allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.content
@@ -205,9 +210,7 @@ class NetworkInterface(BaseLazyObject):
         )
 
     def _url(self, item: str) -> str:
-        return "{base}network/interfaces/macs/{mac}/{item}".format(
-            base=METADATA_URL, mac=self.mac, item=item
-        )
+        return f"{self.parent.metadata_url}network/interfaces/macs/{self.mac}/{item}"
 
     @cached_property
     def device_number(self) -> int:

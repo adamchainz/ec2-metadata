@@ -35,3 +35,7 @@ if __name__ == "__main__":
         check=True,
         capture_output=True,
     )
+    subprocess.run(
+        ["python3.10", *common_args, "-o", "py310.txt"],
+        check=True,
+    )

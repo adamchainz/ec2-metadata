@@ -1,16 +1,7 @@
 import pytest
 import requests
 
-from ec2_metadata import (
-    DYNAMIC_URL,
-    METADATA_URL,
-    SERVICE_URL,
-    TOKEN_TTL_SECONDS,
-    USERDATA_URL,
-    EC2Metadata,
-    NetworkInterface,
-    ec2_metadata,
-)
+from ec2_metadata import TOKEN_TTL_SECONDS, EC2Metadata, NetworkInterface, ec2_metadata
 
 
 @pytest.fixture(autouse=True)
@@ -21,7 +12,7 @@ def clear_it():
 @pytest.fixture(autouse=True)
 def em_requests_mock(requests_mock):
     requests_mock.put(
-        SERVICE_URL + "api/token",
+        "http://169.254.169.254/latest/api/token",
         headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},
         text="example-token",
     )
@@ -36,7 +27,9 @@ example_mac = "00:11:22:33:44:55"
 
 def test_custom_session(em_requests_mock):
     EC2Metadata(session=requests.Session())
-    em_requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", text="ami-12345678"
+    )
     assert ec2_metadata.ami_id == "ami-12345678"
 
 
@@ -54,7 +47,10 @@ def add_identity_doc_response(em_requests_mock, overrides=None):
     }
     if overrides:
         identity_doc.update(overrides)
-    em_requests_mock.get(DYNAMIC_URL + "instance-identity/document", json=identity_doc)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/dynamic/instance-identity/document",
+        json=identity_doc,
+    )
     return identity_doc
 
 
@@ -65,7 +61,7 @@ def test_account_id(em_requests_mock):
 
 def test_account_id_token_error(requests_mock):
     requests_mock.put(
-        SERVICE_URL + "api/token",
+        "http://169.254.169.254/latest/api/token",
         headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},
         status_code=500,
     )
@@ -74,81 +70,108 @@ def test_account_id_token_error(requests_mock):
 
 
 def test_account_id_error(em_requests_mock):
-    em_requests_mock.get(DYNAMIC_URL + "instance-identity/document", status_code=500)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/dynamic/instance-identity/document",
+        status_code=500,
+    )
     with pytest.raises(requests.exceptions.HTTPError):
         ec2_metadata.account_id
 
 
 def test_ami_id(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", text="ami-12345678"
+    )
     assert ec2_metadata.ami_id == "ami-12345678"
 
 
 def test_ami_id_cached(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", text="ami-12345678"
+    )
     ec2_metadata.ami_id
-    em_requests_mock.get(METADATA_URL + "ami-id", status_code=500)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", status_code=500
+    )
     ec2_metadata.ami_id  # no error
 
 
 def test_ami_id_cached_cleared(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "ami-id", text="ami-12345678")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", text="ami-12345678"
+    )
     ec2_metadata.ami_id
 
     ec2_metadata.clear_all()
-    em_requests_mock.get(METADATA_URL + "ami-id", status_code=500)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-id", status_code=500
+    )
 
     with pytest.raises(requests.exceptions.HTTPError):
         ec2_metadata.ami_id
 
 
 def test_ami_launch_index(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "ami-launch-index", text="0")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-launch-index", text="0"
+    )
     assert ec2_metadata.ami_launch_index == 0
 
 
 def test_ami_manifest_path(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "ami-manifest-path", text="(unknown)")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/ami-manifest-path", text="(unknown)"
+    )
     assert ec2_metadata.ami_manifest_path == "(unknown)"
 
 
 def test_availability_zone(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "placement/availability-zone", text="eu-west-1a"
+        "http://169.254.169.254/latest/meta-data/placement/availability-zone",
+        text="eu-west-1a",
     )
     assert ec2_metadata.availability_zone == "eu-west-1a"
 
 
 def test_availability_zone_id(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "placement/availability-zone-id", text="use1-az6"
+        "http://169.254.169.254/latest/meta-data/placement/availability-zone-id",
+        text="use1-az6",
     )
     assert ec2_metadata.availability_zone_id == "use1-az6"
 
 
 def test_iam_info(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", text="{}")
+    em_requests_mock.get("http://169.254.169.254/latest/meta-data/iam/info", text="{}")
     assert ec2_metadata.iam_info == {}
 
 
 def test_iam_info_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info", status_code=404
+    )
     assert ec2_metadata.iam_info is None
 
 
 def test_iam_info_unexpected(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", status_code=500)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info", status_code=500
+    )
     with pytest.raises(requests.exceptions.HTTPError):
         ec2_metadata.iam_info
 
 
 def test_instance_action(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "instance-action", text="none")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/instance-action", text="none"
+    )
     assert ec2_metadata.instance_action == "none"
 
 
 def test_instance_id(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "instance-id", text="i-12345678")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/instance-id", text="i-12345678"
+    )
     assert ec2_metadata.instance_id == "i-12345678"
 
 
@@ -159,51 +182,66 @@ def test_instance_identity(em_requests_mock):
 
 def test_instance_profile_arn(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "iam/info", text='{"InstanceProfileArn": "arn:foobar"}'
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        text='{"InstanceProfileArn": "arn:foobar"}',
     )
     assert ec2_metadata.instance_profile_arn == "arn:foobar"
 
 
 def test_instance_profile_arn_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info", status_code=404
+    )
     assert ec2_metadata.instance_profile_arn is None
 
 
 def test_instance_profile_id(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "iam/info", text='{"InstanceProfileId": "some-id"}'
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        text='{"InstanceProfileId": "some-id"}',
     )
     assert ec2_metadata.instance_profile_id == "some-id"
 
 
 def test_instance_profile_id_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info", status_code=404
+    )
     assert ec2_metadata.instance_profile_id is None
 
 
 def test_instance_type(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "instance-type", text="t2.nano")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/instance-type", text="t2.nano"
+    )
     assert ec2_metadata.instance_type == "t2.nano"
 
 
 def test_kernel_id(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "kernel-id", text="aki-dc9ed9af")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/kernel-id", text="aki-dc9ed9af"
+    )
     assert ec2_metadata.kernel_id == "aki-dc9ed9af"
 
 
 def test_kernel_id_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "kernel-id", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/kernel-id", status_code=404
+    )
     assert ec2_metadata.kernel_id is None
 
 
 def test_mac(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "mac", text=example_mac)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/mac", text=example_mac
+    )
     assert ec2_metadata.mac == example_mac
 
 
 def test_network_interfaces(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "network/interfaces/macs/", text=example_mac + "/"
+        "http://169.254.169.254/latest/meta-data/network/interfaces/macs/",
+        text=example_mac + "/",
     )
     assert ec2_metadata.network_interfaces == {
         example_mac: NetworkInterface(example_mac, ec2_metadata)
@@ -212,35 +250,45 @@ def test_network_interfaces(em_requests_mock):
 
 def test_private_hostname(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "local-hostname", text="ip-172-30-0-0.eu-west-1.compute.internal"
+        "http://169.254.169.254/latest/meta-data/local-hostname",
+        text="ip-172-30-0-0.eu-west-1.compute.internal",
     )
     assert ec2_metadata.private_hostname == "ip-172-30-0-0.eu-west-1.compute.internal"
 
 
 def test_private_ipv4(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "local-ipv4", text="172.30.0.0")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/local-ipv4", text="172.30.0.0"
+    )
     assert ec2_metadata.private_ipv4 == "172.30.0.0"
 
 
 def test_public_hostname(em_requests_mock):
     em_requests_mock.get(
-        METADATA_URL + "public-hostname", text="ec2-1-2-3-4.compute-1.amazonaws.com"
+        "http://169.254.169.254/latest/meta-data/public-hostname",
+        text="ec2-1-2-3-4.compute-1.amazonaws.com",
     )
     assert ec2_metadata.public_hostname == "ec2-1-2-3-4.compute-1.amazonaws.com"
 
 
 def test_public_hostname_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "public-hostname", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/public-hostname", status_code=404
+    )
     assert ec2_metadata.public_hostname is None
 
 
 def test_public_ipv4(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "public-ipv4", text="1.2.3.4")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/public-ipv4", text="1.2.3.4"
+    )
     assert ec2_metadata.public_ipv4 == "1.2.3.4"
 
 
 def test_public_ipv4_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "public-ipv4", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/public-ipv4", status_code=404
+    )
     assert ec2_metadata.public_ipv4 is None
 
 
@@ -250,20 +298,27 @@ def test_region(em_requests_mock):
 
 
 def test_reservation_id(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "reservation-id", text="r-12345678901234567")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/reservation-id",
+        text="r-12345678901234567",
+    )
     assert ec2_metadata.reservation_id == "r-12345678901234567"
 
 
 def test_security_groups_single(em_requests_mock):
     # most common case: a single SG
-    em_requests_mock.get(METADATA_URL + "security-groups", text="security-group-one")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/security-groups",
+        text="security-group-one",
+    )
     assert ec2_metadata.security_groups == ["security-group-one"]
 
 
 def test_security_groups_two(em_requests_mock):
     # another common case: multiple SGs
     em_requests_mock.get(
-        METADATA_URL + "security-groups", text="security-group-one\nsecurity-group-2"
+        "http://169.254.169.254/latest/meta-data/security-groups",
+        text="security-group-one\nsecurity-group-2",
     )
     assert ec2_metadata.security_groups == ["security-group-one", "security-group-2"]
 
@@ -271,17 +326,19 @@ def test_security_groups_two(em_requests_mock):
 def test_security_groups_emptystring(em_requests_mock):
     # Check '' too. Can't create an instance without a SG on EC2 but we should
     # safely handle it, perhaps it's possible in e.g. OpenStack.
-    em_requests_mock.get(METADATA_URL + "security-groups", text="")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/security-groups", text=""
+    )
     assert ec2_metadata.security_groups == []
 
 
 def test_user_data_none(em_requests_mock):
-    em_requests_mock.get(USERDATA_URL, status_code=404)
+    em_requests_mock.get("http://169.254.169.254/latest/user-data/", status_code=404)
     assert ec2_metadata.user_data is None
 
 
 def test_user_data_something(em_requests_mock):
-    em_requests_mock.get(USERDATA_URL, content=b"foobar")
+    em_requests_mock.get("http://169.254.169.254/latest/user-data/", content=b"foobar")
     assert ec2_metadata.user_data == b"foobar"
 
 
@@ -289,7 +346,11 @@ def test_user_data_something(em_requests_mock):
 
 
 def add_interface_response(em_requests_mock, url, text="", **kwargs):
-    full_url = METADATA_URL + "network/interfaces/macs/" + example_mac + url
+    full_url = (
+        "http://169.254.169.254/latest/meta-data/network/interfaces/macs/"
+        + example_mac
+        + url
+    )
     em_requests_mock.get(full_url, text=text, **kwargs)
 
 

@@ -176,6 +176,14 @@ class EC2Metadata(BaseLazyObject):
         return resp.text
 
     @cached_property
+    def partition(self) -> str:
+        return self._get_url(f"{self.metadata_url}services/partition").text
+
+    @cached_property
+    def domain(self) -> str:
+        return self._get_url(f"{self.metadata_url}services/domain").text
+
+    @cached_property
     def region(self) -> str:
         return self.instance_identity_document["region"]
 

@@ -234,6 +234,19 @@ public, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
 The public IPv4 address of the instance, or ``None`` if the instance is not
 public, e.g. ``'1.2.3.4'``.
 
+``partition : str``
+~~~~~~~~~~~~~~~~~~~
+
+The AWS partition where the instance is running. e.g. ``'aws'`` for the
+standard AWS regions, ``'aws-us-gov'`` for GovCloud (US), or ``'aws-cn'``
+for China,
+
+``domain : str``
+~~~~~~~~~~~~~~~~~~~
+
+The domain for AWS resources for the region. ``'amazonaws.com'`` for the
+standard AWS regions and GovCloud (US), or ``'amazonaws.com.cn'`` for China.
+
 ``region: str``
 ~~~~~~~~~~~~~~~
 

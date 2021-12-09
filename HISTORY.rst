@@ -11,6 +11,9 @@ History
 
   Thanks to Quimey Vivas in `PR #346 <https://github.com/adamchainz/ec2-metadata/pull/346>`__.
 
+* Add ``partition`` attribute.
+* Add ``domain`` attribute.
+
 2.7.0 (2022-01-10)
 ------------------
 

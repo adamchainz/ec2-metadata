@@ -45,7 +45,7 @@ Python 3.6 to 3.10 supported.
 ----
 
 **Working on a Django project?**
-Check out my book `Speed Up Your Django Tests <https://gumroad.com/l/suydt>`__ which covers loads of best practices so you can write faster, more accurate tests.
+Improve your skills with `one of my books <https://adamj.eu/books/>`__.
 
 ----
 

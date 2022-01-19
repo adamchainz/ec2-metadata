@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import sys
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import requests
 
@@ -28,7 +30,7 @@ class BaseLazyObject:
 class EC2Metadata(BaseLazyObject):
     def __init__(
         self,
-        session: Optional[requests.Session] = None,
+        session: requests.Session | None = None,
     ) -> None:
         if session is None:
             session = requests.Session()
@@ -95,7 +97,7 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}ami-manifest-path").text
 
     @cached_property
-    def iam_info(self) -> Optional[Dict[str, Any]]:
+    def iam_info(self) -> dict[str, Any] | None:
         resp = self._get_url(f"{self.metadata_url}iam/info", allow_404=True)
         if resp.status_code == 404:
             return None
@@ -110,18 +112,18 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}instance-id").text
 
     @cached_property
-    def instance_identity_document(self) -> Dict[str, Any]:
+    def instance_identity_document(self) -> dict[str, Any]:
         return self._get_url(f"{self.dynamic_url}instance-identity/document").json()
 
     @property
-    def instance_profile_arn(self) -> Optional[str]:
+    def instance_profile_arn(self) -> str | None:
         iam_info = self.iam_info
         if iam_info is None:
             return None
         return iam_info["InstanceProfileArn"]
 
     @property
-    def instance_profile_id(self) -> Optional[str]:
+    def instance_profile_id(self) -> str | None:
         iam_info = self.iam_info
         if iam_info is None:
             return None
@@ -132,7 +134,7 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}instance-type").text
 
     @cached_property
-    def kernel_id(self) -> Optional[str]:
+    def kernel_id(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}kernel-id", allow_404=True)
         if resp.status_code == 404:
             return None
@@ -143,7 +145,7 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}mac").text
 
     @cached_property
-    def network_interfaces(self) -> Dict[str, "NetworkInterface"]:
+    def network_interfaces(self) -> dict[str, NetworkInterface]:
         macs_text = self._get_url(f"{self.metadata_url}network/interfaces/macs/").text
         macs = [line.rstrip("/") for line in macs_text.splitlines()]
         return {mac: NetworkInterface(mac, self) for mac in macs}
@@ -157,14 +159,14 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}local-ipv4").text
 
     @cached_property
-    def public_hostname(self) -> Optional[str]:
+    def public_hostname(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}public-hostname", allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
-    def public_ipv4(self) -> Optional[str]:
+    def public_ipv4(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}public-ipv4", allow_404=True)
         if resp.status_code == 404:
             return None
@@ -179,11 +181,11 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}reservation-id").text
 
     @cached_property
-    def security_groups(self) -> List[str]:
+    def security_groups(self) -> list[str]:
         return self._get_url(f"{self.metadata_url}security-groups").text.splitlines()
 
     @cached_property
-    def user_data(self) -> Optional[bytes]:
+    def user_data(self) -> bytes | None:
         resp = self._get_url(self.userdata_url, allow_404=True)
         if resp.status_code == 404:
             return None
@@ -191,7 +193,7 @@ class EC2Metadata(BaseLazyObject):
 
 
 class NetworkInterface(BaseLazyObject):
-    def __init__(self, mac: str, parent: Optional[EC2Metadata] = None) -> None:
+    def __init__(self, mac: str, parent: EC2Metadata | None = None) -> None:
         self.mac = mac
         if parent is None:
             self.parent = ec2_metadata
@@ -220,7 +222,7 @@ class NetworkInterface(BaseLazyObject):
         return self.parent._get_url(self._url("interface-id")).text
 
     @cached_property
-    def ipv4_associations(self) -> Dict[str, List[str]]:
+    def ipv4_associations(self) -> dict[str, list[str]]:
         associations = {}
         for public_ip in self.public_ipv4s:
             url = self._url(f"ipv4-associations/{public_ip}")
@@ -230,7 +232,7 @@ class NetworkInterface(BaseLazyObject):
         return associations
 
     @cached_property
-    def ipv6s(self) -> List[str]:
+    def ipv6s(self) -> list[str]:
         resp = self.parent._get_url(self._url("ipv6s"), allow_404=True)
         if resp.status_code == 404:
             return []
@@ -245,29 +247,29 @@ class NetworkInterface(BaseLazyObject):
         return self.parent._get_url(self._url("local-hostname")).text
 
     @cached_property
-    def private_ipv4s(self) -> List[str]:
+    def private_ipv4s(self) -> list[str]:
         return self.parent._get_url(self._url("local-ipv4s")).text.splitlines()
 
     @cached_property
-    def public_hostname(self) -> Optional[str]:
+    def public_hostname(self) -> str | None:
         resp = self.parent._get_url(self._url("public-hostname"), allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
-    def public_ipv4s(self) -> List[str]:
+    def public_ipv4s(self) -> list[str]:
         resp = self.parent._get_url(self._url("public-ipv4s"), allow_404=True)
         if resp.status_code == 404:
             return []
         return resp.text.splitlines()
 
     @cached_property
-    def security_groups(self) -> List[str]:
+    def security_groups(self) -> list[str]:
         return self.parent._get_url(self._url("security-groups")).text.splitlines()
 
     @cached_property
-    def security_group_ids(self) -> List[str]:
+    def security_group_ids(self) -> list[str]:
         return self.parent._get_url(self._url("security-group-ids")).text.splitlines()
 
     @cached_property
@@ -275,14 +277,14 @@ class NetworkInterface(BaseLazyObject):
         return self.parent._get_url(self._url("subnet-id")).text
 
     @cached_property
-    def subnet_ipv4_cidr_block(self) -> Optional[str]:
+    def subnet_ipv4_cidr_block(self) -> str | None:
         resp = self.parent._get_url(self._url("subnet-ipv4-cidr-block"), allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
-    def subnet_ipv6_cidr_blocks(self) -> List[str]:
+    def subnet_ipv6_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(
             self._url("subnet-ipv6-cidr-blocks"), allow_404=True
         )
@@ -295,21 +297,21 @@ class NetworkInterface(BaseLazyObject):
         return self.parent._get_url(self._url("vpc-id")).text
 
     @cached_property
-    def vpc_ipv4_cidr_block(self) -> Optional[str]:
+    def vpc_ipv4_cidr_block(self) -> str | None:
         resp = self.parent._get_url(self._url("vpc-ipv4-cidr-block"), allow_404=True)
         if resp.status_code == 404:
             return None
         return resp.text
 
     @cached_property
-    def vpc_ipv4_cidr_blocks(self) -> List[str]:
+    def vpc_ipv4_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(self._url("vpc-ipv4-cidr-blocks"), allow_404=True)
         if resp.status_code == 404:
             return []
         return resp.text.splitlines()
 
     @cached_property
-    def vpc_ipv6_cidr_blocks(self) -> List[str]:
+    def vpc_ipv6_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(self._url("vpc-ipv6-cidr-blocks"), allow_404=True)
         if resp.status_code == 404:
             return []

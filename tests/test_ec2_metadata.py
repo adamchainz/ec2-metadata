@@ -295,13 +295,20 @@ def test_public_ipv4_none(em_requests_mock):
     )
     assert ec2_metadata.public_ipv4 is None
 
+
 def test_services_partition(em_requests_mock):
-    em_requests_mock.get("http://169.254.169.254/latest/meta-data/services/partition", text="aws")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/services/partition", text="aws"
+    )
     assert ec2_metadata.partition == "aws"
 
+
 def test_services_domain(em_requests_mock):
-    em_requests_mock.get("http://169.254.169.254/latest/meta-data/services/domain", text="amazonaws.com")
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/services/domain", text="amazonaws.com"
+    )
     assert ec2_metadata.domain == "amazonaws.com"
+
 
 def test_region(em_requests_mock):
     add_identity_doc_response(em_requests_mock, {"region": "eu-whatever-1"})

@@ -352,6 +352,13 @@ The list of IPv6 CIDR blocks of the subnet in which the interface resides, e.g.
 ``['2001:db8:abcd:ef00::/64']``. If the subnet does not have any IPv6 CIDR
 blocks or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
 
+``tags: map``
+~~~~~~~~~~~~~~~~~~~
+
+The map of instance tags when it is enabled, e.g.
+``{'Name': 'my-instance'}``.
+If this is not enabled, it returns an empty map, e.g. ``{}``.
+
 ``vpc_id: str``
 ~~~~~~~~~~~~~~~
 

@@ -60,6 +60,29 @@ def test_account_id(em_requests_mock):
     add_identity_doc_response(em_requests_mock, {"accountId": "1234"})
     assert ec2_metadata.account_id == "1234"
 
+def test_tags(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/",
+        text="Name\nTest",
+    )
+
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/Name",
+        text="test-instance",
+    )
+
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/Test",
+        text="foobar",
+    )
+
+    assert ec2_metadata.tags.get('Name') == 'test-instance'
+    assert ec2_metadata.tags.get('Test') == 'foobar'
+
+def test_tags_not_enabled(em_requests_mock):
+    em_requests_mock.get("http://169.254.169.254/latest/meta-data/tags/instance/", status_code=404)
+
+    assert ec2_metadata.tags == {}
 
 def test_account_id_token_error(requests_mock):
     requests_mock.put(

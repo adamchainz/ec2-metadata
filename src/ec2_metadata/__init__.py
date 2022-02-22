@@ -108,6 +108,13 @@ class EC2Metadata(BaseLazyObject):
     def instance_action(self) -> str:
         return self._get_url(f"{self.metadata_url}instance-action").text
 
+    @property
+    def spot_instance_action(self) -> dict[str, Any] | None:
+        resp = self._get_url(f"{self.metadata_url}spot/instance-action", allow_404=True)
+        if resp.status_code == 404:
+            return None
+        return resp.json()
+
     @cached_property
     def instance_id(self) -> str:
         return self._get_url(f"{self.metadata_url}instance-id").text

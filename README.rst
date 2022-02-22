@@ -162,7 +162,16 @@ no role is attached.
 
 **Uncached.** A state that notifies if the instance will reboot in preparation
 for bundling. See the `AWS docs section “Instance Metadata Categories”
-<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html#instancedata-data-categories>`_
+<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
+for the valid values.
+
+``spot_instance_action: dict``
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Uncached.** A state that notifies if the (spot) instance is marked for termination by Amazon.
+Returns ``None`` if the instance is not spot or not marked for termination.
+See the `AWS docs section “Instance Metadata Categories”
+<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
 for the valid values.
 
 ``instance_id: str``

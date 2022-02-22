@@ -163,6 +163,21 @@ def test_iam_info_unexpected(em_requests_mock):
         ec2_metadata.iam_info
 
 
+def test_spot_instance_action(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/spot/instance-action",
+        text='{"action": "terminate"}',
+    )
+    assert ec2_metadata.spot_instance_action == {"action": "terminate"}
+
+
+def test_spot_instance_action_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/spot/instance-action", status_code=404
+    )
+    assert ec2_metadata.spot_instance_action is None
+
+
 def test_instance_action(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/instance-action", text="none"

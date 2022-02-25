@@ -41,7 +41,10 @@ class EC2Metadata(BaseLazyObject):
         # Previously we used a fixed version of the service, rather than 'latest', in
         # case any backward incompatible changes were made. It seems metadata service
         # v2 only operates with 'latest' at time of writing (2020-02-12).
-        self.service_url = getenv("EC2METADATA_SERVICE_URL", default="http://169.254.169.254/latest/")
+        self.service_url = getenv(
+            "EC2METADATA_SERVICE_URL",
+            default="http://169.254.169.254/latest/"
+        )
         self.dynamic_url = f"{self.service_url}dynamic/"
         self.metadata_url = f"{self.service_url}meta-data/"
         self.userdata_url = f"{self.service_url}user-data/"

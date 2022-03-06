@@ -161,6 +161,14 @@ def test_availability_zone_id(em_requests_mock):
     assert ec2_metadata.availability_zone_id == "use1-az6"
 
 
+def test_availability_zone_id_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/placement/availability-zone-id",
+        status_code=404,
+    )
+    assert ec2_metadata.availability_zone_id is None
+
+
 def test_domain(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/services/domain",

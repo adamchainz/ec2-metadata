@@ -98,8 +98,13 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}placement/availability-zone").text
 
     @cached_property
-    def availability_zone_id(self) -> str:
-        return self._get_url(f"{self.metadata_url}placement/availability-zone-id").text
+    def availability_zone_id(self) -> str | None:
+        resp = self._get_url(
+            f"{self.metadata_url}placement/availability-zone-id", allow_404=True
+        )
+        if resp.status_code == 404:
+            return None
+        return resp.text
 
     @cached_property
     def ami_launch_index(self) -> int:

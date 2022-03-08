@@ -166,9 +166,9 @@ no role is attached.
 ``iam_security_credentials: dict | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A dictionary of data for the security credentials associated with the IAM role
-attached to the instance, or ``None`` if no role is attached. See the
-`AWS docs section “Retrieve security credentials from instance metadata“
+A dictionary of data for the security credentials associated with the IAM role attached to the instance, or ``None`` if no role is attached.
+
+See the `AWS docs section “Retrieve security credentials from instance metadata“
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#instance-metadata-security-credentials>`_
 for more details.
 
@@ -207,8 +207,7 @@ The ID of the IAM role/instance profile attached to the instance, taken from
 ``instance_profile_name: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The instance profile name (extracted from the ``instance_profile_arn``),
-or ``None`` if no role is attached.
+The instance profile name, extracted from ``instance_profile_arn``, or ``None`` if no role is attached.
 
 ``instance_type: str``
 ~~~~~~~~~~~~~~~~~~~~~~

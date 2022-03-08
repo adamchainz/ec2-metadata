@@ -205,7 +205,7 @@ The ID of the IAM role/instance profile attached to the instance, taken from
 
 
 ``instance_profile_name: str | None``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The instance profile name, extracted from ``instance_profile_arn``, or ``None`` if no role is attached.
 

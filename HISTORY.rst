@@ -2,6 +2,9 @@
 History
 =======
 
+2.8.0 (2022-03-08)
+------------------
+
 * Add ``tags`` attribute, a mapping of the instance tags.
   This requires the corresponding EC2 feature to be enabled on the instance.
 

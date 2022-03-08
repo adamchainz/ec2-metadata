@@ -174,20 +174,23 @@ def test_iam_info_unexpected(em_requests_mock):
 
 
 def test_iam_security_credentials(em_requests_mock):
-    instance_profile_name = "myInstanceProfile"
+    profile = "myInstanceProfile"
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info",
-        text='{"InstanceProfileArn": "arn:foobar/' + instance_profile_name + '"}',
+        text='{"InstanceProfileArn": "arn:foobar/' + profile + '"}',
     )
     em_requests_mock.get(
-        f"http://169.254.169.254/latest/meta-data/iam/security-credentials/{instance_profile_name}",
+        f"http://169.254.169.254/latest/meta-data/iam/security-credentials/{profile}",
         text="{}",
     )
     assert ec2_metadata.iam_security_credentials == {}
 
 
 def test_iam_security_credentials_iam_info_none(em_requests_mock):
-    em_requests_mock.get(METADATA_URL + "iam/info", status_code=404)
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        status_code=404,
+    )
     assert ec2_metadata.iam_security_credentials is None
 
 

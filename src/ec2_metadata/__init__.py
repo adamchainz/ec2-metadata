@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import sys
 import time
+from collections.abc import Iterator, Mapping
 from typing import Any
 
 import requests
@@ -185,17 +186,9 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}security-groups").text.splitlines()
 
     @cached_property
-    def tags(self) -> dict[str, str]:
-        tags = {}
-
-        resp = self._get_url(f"{self.metadata_url}tags/instance/", allow_404=True)
-        if not resp.status_code == 404:
-            tags_keys = [line.rstrip("/") for line in resp.text.splitlines()]
-            for tag_key in tags_keys:
-                resp = self._get_url(f"{self.metadata_url}tags/instance/{tag_key}")
-                tag_value = resp.text
-                tags[tag_key] = tag_value
-        return tags
+    def tags(self) -> InstanceTags:
+        resp = self._get_url(f"{self.metadata_url}tags/instance/")
+        return InstanceTags(resp.text.splitlines(), self)
 
     @cached_property
     def user_data(self) -> bytes | None:
@@ -203,6 +196,34 @@ class EC2Metadata(BaseLazyObject):
         if resp.status_code == 404:
             return None
         return resp.content
+
+
+if sys.version_info > (3, 9):
+    InstanceTagsBase = Mapping[str, str]
+else:
+    InstanceTagsBase = Mapping
+
+
+class InstanceTags(InstanceTagsBase):
+    def __init__(self, names: list[str], parent: EC2Metadata) -> None:
+        self._map: dict[str, str | None] = {name: None for name in names}
+        self.parent = parent
+
+    def __getitem__(self, name: str) -> str:
+        value = self._map[name]
+        if value is None:
+            resp = self.parent._get_url(
+                f"{self.parent.metadata_url}tags/instance/{name}"
+            )
+            value = resp.text
+            self._map[name] = value
+        return value
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._map)
+
+    def __len__(self) -> int:
+        return len(self._map)
 
 
 class NetworkInterface(BaseLazyObject):

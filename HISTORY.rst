@@ -17,6 +17,8 @@ History
 
 * Add ``instance_profile_name`` and ``iam_security_credentials`` attributes.
 
+  Thanks to Jean-Sebastien Jeannotte in `PR #313 <https://github.com/adamchainz/ec2-metadata/pull/313>`__.
+
 2.7.0 (2022-01-10)
 ------------------
 

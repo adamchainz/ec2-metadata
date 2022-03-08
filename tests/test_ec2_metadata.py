@@ -382,6 +382,41 @@ def test_tags_multiple(em_requests_mock):
     }
 
 
+def test_tags_repeat_access(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/",
+        text="Name",
+    )
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/Name",
+        text="test-instance",
+    )
+
+    ec2_metadata.tags["Name"]
+    ec2_metadata.tags["Name"]
+
+    # 3 requests: api/token, tags/instance, tags/instance/Name
+    assert len(em_requests_mock.request_history) == 3
+
+
+def test_tags_iter(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/",
+        text="Name",
+    )
+
+    assert list(iter(ec2_metadata.tags)) == ["Name"]
+
+
+def test_tags_len(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/tags/instance/",
+        text="Name\ncustom-tag",
+    )
+
+    assert len(ec2_metadata.tags) == 2
+
+
 def test_user_data_none(em_requests_mock):
     em_requests_mock.get("http://169.254.169.254/latest/user-data/", status_code=404)
     assert ec2_metadata.user_data is None

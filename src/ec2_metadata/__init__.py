@@ -140,7 +140,7 @@ class EC2Metadata(BaseLazyObject):
         instance_profile_arn = self.instance_profile_arn
         if instance_profile_arn is None:
             return None
-        return instance_profile_arn.split("/")[-1]
+        return instance_profile_arn.rsplit("/", 1)[-1]
 
     @property
     def instance_profile_id(self) -> str | None:

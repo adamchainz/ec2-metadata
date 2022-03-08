@@ -2,6 +2,11 @@
 History
 =======
 
+* Add ``tags`` attribute, a mapping of the instance tags.
+  This requires the corresponding EC2 feature to be enabled on the instance.
+
+  Thanks to Renan Rodrigues in `PR #344 <https://github.com/adamchainz/ec2-metadata/pull/344>`__.
+
 2.7.0 (2022-01-10)
 ------------------
 

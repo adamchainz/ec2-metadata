@@ -250,11 +250,40 @@ The ID of the reservation used to launch the instance, e.g.
 
 List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
 
+``tags: InstanceTags``
+~~~~~~~~~~~~~~~~~~~~~~
+
+A dict-like mapping of the tags for the instance (documented below).
+This requires you to `explicitly enable the feature <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#allow-access-to-tags-in-IMDS>`__ for the instance.
+If the feature is not enabled, accessing this attribute raises an error.
+
+(It also seems that there is a bug where if the feature is enabled and then disabled, the metadata service returns an empty response.
+This is indistinguishable from “no tags”, so beware that in that case, ``InstanceTags`` will just look like an empty mapping.)
+
 ``user_data: bytes | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The raw user data assigned to the instance (not base64 encoded), or ``None`` if
 there is none.
+
+``InstanceTags``
+----------------
+
+A dict-like mapping of tag names to values (both ``str``s).
+To avoid unnecessary requests, the mapping is lazy: values are only fetched when required.
+(Names are known on construction though, from the first request in ``EC2Metadata.tags``.)
+
+The metadata service will receive tag updates on some instance types, as per `the AWS documentation <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#work-with-tags-in-IMDS>`:
+
+    If you add or remove an instance tag, the instance metadata is updated while the instance is running for instances built on the Nitro System, without needing to stop and then start the instance.
+    For all other instances, to update the tags in the instance metadata, you must stop and then start the instance.
+
+Because ``InstanceTags`` is cached, it won’t reflect such updates on Nitro instances unless you clear it first:
+
+.. code-block:: python
+
+    del ec2_metadata.tags
+    ec2_metadata.tags["Name"]  # fresh
 
 ``NetworkInterface``
 --------------------
@@ -351,13 +380,6 @@ if there is none, e.g. ``'172.30.0.0/24'``.
 The list of IPv6 CIDR blocks of the subnet in which the interface resides, e.g.
 ``['2001:db8:abcd:ef00::/64']``. If the subnet does not have any IPv6 CIDR
 blocks or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
-
-``tags: map``
-~~~~~~~~~~~~~~~~~~~
-
-The map of instance tags when it is enabled, e.g.
-``{'Name': 'my-instance'}``.
-If this is not enabled, it returns an empty map, e.g. ``{}``.
 
 ``vpc_id: str``
 ~~~~~~~~~~~~~~~

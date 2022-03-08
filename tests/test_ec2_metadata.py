@@ -145,6 +145,14 @@ def test_availability_zone_id(em_requests_mock):
     assert ec2_metadata.availability_zone_id == "use1-az6"
 
 
+def test_domain(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/services/domain",
+        text="amazonaws.com",
+    )
+    assert ec2_metadata.domain == "amazonaws.com"
+
+
 def test_iam_info(em_requests_mock):
     em_requests_mock.get("http://169.254.169.254/latest/meta-data/iam/info", text="{}")
     assert ec2_metadata.iam_info == {}
@@ -250,6 +258,14 @@ def test_network_interfaces(em_requests_mock):
     assert ec2_metadata.network_interfaces == {
         example_mac: NetworkInterface(example_mac, ec2_metadata)
     }
+
+
+def test_partition(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/services/partition",
+        text="aws",
+    )
+    assert ec2_metadata.partition == "aws"
 
 
 def test_private_hostname(em_requests_mock):

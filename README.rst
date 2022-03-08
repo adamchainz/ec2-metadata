@@ -151,6 +151,12 @@ Clear all the cached attributes on the class, meaning their next access will
 re-fetch the data from the metadata API. This includes clearing the token used
 to authenticate with the service.
 
+``domain: str``
+~~~~~~~~~~~~~~~
+
+The domain for AWS resources for the region. E.g. ``'amazonaws.com'`` for the
+standard AWS regions and GovCloud (US), or ``'amazonaws.com.cn'`` for China.
+
 ``iam_info: dict``
 ~~~~~~~~~~~~~~~~~~
 
@@ -210,6 +216,13 @@ The instance's MAC address, e.g. ``'0a:d2:ae:4d:f3:12'``
 A dictionary of mac address to ``NetworkInterface``, which represents the data
 available on a network interface - see below. E.g.
 ``{'01:23:45:67:89:ab': NetworkInterface('01:23:45:67:89:ab')}``
+
+``partition: str``
+~~~~~~~~~~~~~~~~~~
+
+The AWS partition where the instance is running. E.g. ``'aws'`` for the
+standard AWS regions, ``'aws-us-gov'`` for GovCloud (US), or ``'aws-cn'``
+for China.
 
 ``private_hostname : str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import datetime as dt
+
 import pytest
 import requests
 
@@ -332,6 +334,25 @@ def test_security_groups_emptystring(em_requests_mock):
         "http://169.254.169.254/latest/meta-data/security-groups", text=""
     )
     assert ec2_metadata.security_groups == []
+
+
+def test_spot_instance_action_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/spot/instance-action",
+        status_code=404,
+    )
+    assert ec2_metadata.spot_instance_action is None
+
+
+def test_spot_instance_action(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/spot/instance-action",
+        text='{"action": "stop", "time": "2017-09-18T08:22:00Z"}',
+    )
+    sia = ec2_metadata.spot_instance_action
+    assert sia is not None
+    assert sia.action == "stop"
+    assert sia.time == dt.datetime(2017, 9, 18, 8, 22, 0, tzinfo=dt.timezone.utc)
 
 
 def test_tags_not_enabled(em_requests_mock):

@@ -216,7 +216,7 @@ def test_instance_identity(em_requests_mock):
 def test_instance_profile_arn(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info",
-        text='{"InstanceProfileArn": "arn:foobar"}',
+        text='{"InstanceProfileArn": "arn:foobar/myInstanceProfile"}',
     )
     assert ec2_metadata.instance_profile_arn == "arn:foobar/myInstanceProfile"
 

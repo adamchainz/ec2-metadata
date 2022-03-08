@@ -173,6 +173,27 @@ def test_iam_info_unexpected(em_requests_mock):
         ec2_metadata.iam_info
 
 
+def test_iam_security_credentials(em_requests_mock):
+    profile = "myInstanceProfile"
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        text='{"InstanceProfileArn": "arn:foobar/' + profile + '"}',
+    )
+    em_requests_mock.get(
+        f"http://169.254.169.254/latest/meta-data/iam/security-credentials/{profile}",
+        text="{}",
+    )
+    assert ec2_metadata.iam_security_credentials == {}
+
+
+def test_iam_security_credentials_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        status_code=404,
+    )
+    assert ec2_metadata.iam_security_credentials is None
+
+
 def test_instance_action(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/instance-action", text="none"
@@ -195,9 +216,9 @@ def test_instance_identity(em_requests_mock):
 def test_instance_profile_arn(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info",
-        text='{"InstanceProfileArn": "arn:foobar"}',
+        text='{"InstanceProfileArn": "arn:foobar/myInstanceProfile"}',
     )
-    assert ec2_metadata.instance_profile_arn == "arn:foobar"
+    assert ec2_metadata.instance_profile_arn == "arn:foobar/myInstanceProfile"
 
 
 def test_instance_profile_arn_none(em_requests_mock):
@@ -220,6 +241,14 @@ def test_instance_profile_id_none(em_requests_mock):
         "http://169.254.169.254/latest/meta-data/iam/info", status_code=404
     )
     assert ec2_metadata.instance_profile_id is None
+
+
+def test_instance_profile_name(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info",
+        text='{"InstanceProfileArn": "arn:foobar/myInstanceProfile"}',
+    )
+    assert ec2_metadata.instance_profile_name == "myInstanceProfile"
 
 
 def test_instance_type(em_requests_mock):

@@ -7,7 +7,9 @@ History
 
   Thanks to Renan Rodrigues in `PR #344 <https://github.com/adamchainz/ec2-metadata/pull/344>`__.
 
-* Add support for ``spot/instance-action``.
+* Add ``spot_instance_action`` attribute.
+
+  Thanks to Quimey Vivas in `PR #346 <https://github.com/adamchainz/ec2-metadata/pull/346>`__.
 
 2.7.0 (2022-01-10)
 ------------------

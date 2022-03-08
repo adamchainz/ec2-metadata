@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import datetime as dt
 import sys
 import time
 from collections.abc import Iterator, Mapping
@@ -9,6 +10,7 @@ import requests
 
 if sys.version_info >= (3, 8):
     from functools import cached_property
+    from typing import Literal
 else:
     from cached_property import cached_property
 
@@ -108,13 +110,6 @@ class EC2Metadata(BaseLazyObject):
     def instance_action(self) -> str:
         return self._get_url(f"{self.metadata_url}instance-action").text
 
-    @property
-    def spot_instance_action(self) -> dict[str, Any] | None:
-        resp = self._get_url(f"{self.metadata_url}spot/instance-action", allow_404=True)
-        if resp.status_code == 404:
-            return None
-        return resp.json()
-
     @cached_property
     def instance_id(self) -> str:
         return self._get_url(f"{self.metadata_url}instance-id").text
@@ -191,6 +186,19 @@ class EC2Metadata(BaseLazyObject):
     @cached_property
     def security_groups(self) -> list[str]:
         return self._get_url(f"{self.metadata_url}security-groups").text.splitlines()
+
+    @property
+    def spot_instance_action(self) -> SpotInstanceAction | None:
+        resp = self._get_url(f"{self.metadata_url}spot/instance-action", allow_404=True)
+        if resp.status_code == 404:
+            return None
+        data = resp.json()
+        return SpotInstanceAction(
+            data["action"],
+            dt.datetime.fromisoformat(data["time"].rstrip("Z")).replace(
+                tzinfo=dt.timezone.utc
+            ),
+        )
 
     @cached_property
     def tags(self) -> InstanceTags:
@@ -357,6 +365,18 @@ class NetworkInterface(BaseLazyObject):
         if resp.status_code == 404:
             return []
         return resp.text.splitlines()
+
+
+if sys.version_info >= (3, 8):
+    _ActionType = Literal["hibernate", "stop", "terminate"]
+else:
+    _ActionType = str
+
+
+class SpotInstanceAction:
+    def __init__(self, action: _ActionType, time: dt.datetime) -> None:
+        self.action = action
+        self.time = time
 
 
 ec2_metadata = EC2Metadata()

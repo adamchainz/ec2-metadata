@@ -165,15 +165,6 @@ for bundling. See the `AWS docs section “Instance Metadata Categories”
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
 for the valid values.
 
-``spot_instance_action: dict``
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-**Uncached.** A state that notifies if the (spot) instance is marked for termination by Amazon.
-Returns ``None`` if the instance is not spot or not marked for termination.
-See the `AWS docs section “Instance Metadata Categories”
-<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
-for the valid values.
-
 ``instance_id: str``
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -258,6 +249,20 @@ The ID of the reservation used to launch the instance, e.g.
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
+
+``spot_instance_action: SpotInstanceAction | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Uncached.**
+An object describing an action about to happen to this spot instance.
+Returns ``None`` if the instance is not spot, or not marked for termination.
+
+The ``SpotInstanceAction`` object has two attributes:
+
+* ``action: str`` - the action about to happen, one of ``"hibernate"``, ``"stop"``, or ``"terminate"``.
+* ``time: datetime`` - the approximate UTC datetime when the action will occur.
+
+See `AWS docs section <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/spot-instance-termination-notices.html#instance-action-metadata>`__ for a little more information.
 
 ``tags: InstanceTags``
 ~~~~~~~~~~~~~~~~~~~~~~

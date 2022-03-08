@@ -136,18 +136,18 @@ class EC2Metadata(BaseLazyObject):
         return iam_info["InstanceProfileArn"]
 
     @property
-    def instance_profile_name(self) -> str | None:
-        instance_profile_arn = self.instance_profile_arn
-        if instance_profile_arn is None:
-            return None
-        return instance_profile_arn.rsplit("/", 1)[-1]
-
-    @property
     def instance_profile_id(self) -> str | None:
         iam_info = self.iam_info
         if iam_info is None:
             return None
         return iam_info["InstanceProfileId"]
+
+    @property
+    def instance_profile_name(self) -> str | None:
+        instance_profile_arn = self.instance_profile_arn
+        if instance_profile_arn is None:
+            return None
+        return instance_profile_arn.rsplit("/", 1)[-1]
 
     @cached_property
     def instance_type(self) -> str:

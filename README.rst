@@ -311,11 +311,11 @@ there is none.
 ``InstanceTags``
 ----------------
 
-A dict-like mapping of tag names to values (both ``str``s).
+A dict-like mapping of tag names to values (both ``str``\s).
 To avoid unnecessary requests, the mapping is lazy: values are only fetched when required.
 (Names are known on construction though, from the first request in ``EC2Metadata.tags``.)
 
-The metadata service will receive tag updates on some instance types, as per `the AWS documentation <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#work-with-tags-in-IMDS>`:
+The metadata service will receive tag updates on some instance types, as per `the AWS documentation <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/Using_Tags.html#work-with-tags-in-IMDS>`__:
 
     If you add or remove an instance tag, the instance metadata is updated while the instance is running for instances built on the Nitro System, without needing to stop and then start the instance.
     For all other instances, to update the tags in the instance metadata, you must stop and then start the instance.

@@ -2,6 +2,8 @@
 History
 =======
 
+* Add ``autoscaling_target_lifecycle_state`` attribute, as per `AWS announcement <https://aws.amazon.com/about-aws/whats-new/2022/03/amazon-ec2-auto-scaling-lifecycle-instance-metadata/>`__.
+
 2.8.0 (2022-03-08)
 ------------------
 

@@ -121,6 +121,13 @@ The current AWS account ID, e.g. ``'123456789012'``.
 
 The ID of the AMI used to launch the instance, e.g. ``'ami-123456'``.
 
+``autoscaling_target_lifecycle_state: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+**Uncached.**
+The target Auto Scaling lifecycle state that the instance is transitionioning to, or ``None`` if the instance is not in an autoscaling group.
+See AWS docs page `Retrieve the target lifecycle state through instance metadata <https://docs.aws.amazon.com/autoscaling/ec2/userguide/retrieving-target-lifecycle-state-through-imds.html>`__.
+
 ``availability_zone: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -175,7 +182,8 @@ for more details.
 ``instance_action: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Uncached.** A state that notifies if the instance will reboot in preparation
+**Uncached.**
+A state that notifies if the instance will reboot in preparation
 for bundling. See the `AWS docs section “Instance Metadata Categories”
 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
 for the valid values.

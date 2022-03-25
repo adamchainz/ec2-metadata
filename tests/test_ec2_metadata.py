@@ -129,6 +129,22 @@ def test_ami_manifest_path(em_requests_mock):
     assert ec2_metadata.ami_manifest_path == "(unknown)"
 
 
+def test_autoscaling_target_lifecycle_state_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/autoscaling/target-lifecycle-state",
+        status_code=404,
+    )
+    assert ec2_metadata.autoscaling_target_lifecycle_state is None
+
+
+def test_autoscaling_target_lifecycle_state_in_service(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/autoscaling/target-lifecycle-state",
+        text="InService",
+    )
+    assert ec2_metadata.autoscaling_target_lifecycle_state == "InService"
+
+
 def test_availability_zone(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/placement/availability-zone",

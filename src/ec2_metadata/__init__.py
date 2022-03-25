@@ -83,6 +83,16 @@ class EC2Metadata(BaseLazyObject):
     def ami_id(self) -> str:
         return self._get_url(f"{self.metadata_url}ami-id").text
 
+    @property
+    def autoscaling_target_lifecycle_state(self) -> str | None:
+        resp = self._get_url(
+            f"{self.metadata_url}autoscaling/target-lifecycle-state",
+            allow_404=True,
+        )
+        if resp.status_code == 404:
+            return None
+        return resp.text
+
     @cached_property
     def availability_zone(self) -> str:
         return self._get_url(f"{self.metadata_url}placement/availability-zone").text

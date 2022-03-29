@@ -2,6 +2,9 @@
 History
 =======
 
+2.9.1 (2022-03-29)
+------------------
+
 * Return ``None`` for ``availability_zone_id`` when the underlying endpoint returns HTTP 404.
 
   Thanks to Amir Rossert in `PR #350 <https://github.com/adamchainz/ec2-metadata/pull/350>`__.

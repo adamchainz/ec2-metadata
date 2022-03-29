@@ -133,8 +133,8 @@ See AWS docs page `Retrieve the target lifecycle state through instance metadata
 
 The name of the current AZ e.g. ``'eu-west-1a'``.
 
-``availability_zone_id: str``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``availability_zone_id: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The unique, cross-account ID of the current AZ e.g. ``'use1-az6'``.
 See AWS docs page `AZ IDs for your AWS resources

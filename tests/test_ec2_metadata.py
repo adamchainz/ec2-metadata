@@ -1,11 +1,19 @@
 from __future__ import annotations
 
 import datetime as dt
+from typing import Any, Generator
 
 import pytest
 import requests
+from requests_mock import Mocker as RequestsMocker
 
-from ec2_metadata import TOKEN_TTL_SECONDS, EC2Metadata, NetworkInterface, ec2_metadata
+from ec2_metadata import (
+    TOKEN_TTL_SECONDS,
+    EC2Metadata,
+    InstanceIdentityDocumentDict,
+    NetworkInterface,
+    ec2_metadata,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -14,7 +22,9 @@ def clear_it():
 
 
 @pytest.fixture(autouse=True)
-def em_requests_mock(requests_mock):
+def em_requests_mock(
+    requests_mock: RequestsMocker,
+) -> Generator[RequestsMocker, None, None]:
     requests_mock.put(
         "http://169.254.169.254/latest/api/token",
         headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},
@@ -37,20 +47,27 @@ def test_custom_session(em_requests_mock):
     assert ec2_metadata.ami_id == "ami-12345678"
 
 
-def add_identity_doc_response(em_requests_mock, overrides=None):
-    identity_doc = {
-        "accountId": "123456789012",
+def add_identity_doc_response(
+    em_requests_mock: RequestsMocker,
+    account_id: str = "123456789012",
+    region: str = "eu-west-1",
+) -> InstanceIdentityDocumentDict:
+    identity_doc: InstanceIdentityDocumentDict = {
+        "accountId": account_id,
         "architecture": "x86_64",
         "availabilityZone": "eu-west-1a",
+        "billingProducts": None,
         "imageId": "ami-12345678",
         "instanceId": "i-12345678",
         "instanceType": "t2.nano",
+        "kernelId": None,
+        "marketplaceProductCodes": None,
+        "pendingTime": "2022-08-12T10:22:28Z",
         "privateIp": "172.30.0.0",
-        "region": "eu-west-1",
+        "ramdiskId": None,
+        "region": region,
         "version": "2010-08-31",
     }
-    if overrides:
-        identity_doc.update(overrides)
     em_requests_mock.get(
         "http://169.254.169.254/latest/dynamic/instance-identity/document",
         json=identity_doc,
@@ -59,7 +76,7 @@ def add_identity_doc_response(em_requests_mock, overrides=None):
 
 
 def test_account_id(em_requests_mock):
-    add_identity_doc_response(em_requests_mock, {"accountId": "1234"})
+    add_identity_doc_response(em_requests_mock, account_id="1234")
     assert ec2_metadata.account_id == "1234"
 
 
@@ -178,8 +195,15 @@ def test_domain(em_requests_mock):
 
 
 def test_iam_info(em_requests_mock):
-    em_requests_mock.get("http://169.254.169.254/latest/meta-data/iam/info", text="{}")
-    assert ec2_metadata.iam_info == {}
+    result = {
+        "InstanceProfileArn": "arn:foobar/myInstanceProfile",
+        "InstanceProfileId": "some-id",
+        "LastUpdated": "2022-08-12T10:22:29Z",
+    }
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/iam/info", json=result
+    )
+    assert ec2_metadata.iam_info == result
 
 
 def test_iam_info_none(em_requests_mock):
@@ -203,11 +227,19 @@ def test_iam_security_credentials(em_requests_mock):
         "http://169.254.169.254/latest/meta-data/iam/info",
         text='{"InstanceProfileArn": "arn:foobar/' + profile + '"}',
     )
+    result = {
+        "LastUpdated": "2022-08-12T10:48:52Z",
+        "Type": "AWS-HMAC",
+        "AccessKeyId": "some-access-key-id",
+        "SecretAccessKey": "some-secret-access-key",
+        "Token": "some-token",
+        "Expiration": "2022-08-12T17:03:05Z",
+    }
     em_requests_mock.get(
         f"http://169.254.169.254/latest/meta-data/iam/security-credentials/{profile}",
-        text="{}",
+        json=result,
     )
-    assert ec2_metadata.iam_security_credentials == {}
+    assert ec2_metadata.iam_security_credentials == result
 
 
 def test_iam_security_credentials_none(em_requests_mock):
@@ -366,7 +398,7 @@ def test_public_ipv4_none(em_requests_mock):
 
 
 def test_region(em_requests_mock):
-    add_identity_doc_response(em_requests_mock, {"region": "eu-whatever-1"})
+    add_identity_doc_response(em_requests_mock, region="eu-whatever-1")
     assert ec2_metadata.region == "eu-whatever-1"
 
 
@@ -520,7 +552,9 @@ def test_user_data_something(em_requests_mock):
 # NetworkInterface tests
 
 
-def add_interface_response(em_requests_mock, url, text="", **kwargs):
+def add_interface_response(
+    em_requests_mock: RequestsMocker, url: str, text: str = "", **kwargs: Any
+) -> None:
     full_url = (
         "http://169.254.169.254/latest/meta-data/network/interfaces/macs/"
         + example_mac

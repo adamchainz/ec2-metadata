@@ -10,9 +10,47 @@ import requests
 
 if sys.version_info >= (3, 8):
     from functools import cached_property
-    from typing import Literal
+    from typing import Literal, TypedDict
+
+    class IamInfoDict(TypedDict):
+        InstanceProfileArn: str
+        InstanceProfileId: str
+        LastUpdated: str
+
+    class IamSecurityCredentialsDict(TypedDict):
+        LastUpdated: str
+        Type: str
+        AccessKeyId: str
+        SecretAccessKey: str
+        Token: str
+        Expiration: str
+
+    class InstanceIdentityDocumentDict(TypedDict):
+        # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
+        accountId: str
+        architecture: Literal["i386", "x86_64", "arm64"]
+        availabilityZone: str
+        billingProducts: list[str] | None
+        # devpayProductCodes: deprecated, not including
+        marketplaceProductCodes: list[str] | None
+        imageId: str
+        instanceId: str
+        instanceType: str
+        kernelId: str | None
+        pendingTime: str
+        privateIp: str
+        ramdiskId: str | None
+        region: str
+        version: str
+
 else:
+    from typing import Dict
+
     from cached_property import cached_property
+
+    IamInfoDict = Dict[str, Any]
+    IamSecurityCredentialsDict = Dict[str, Any]
+    InstanceIdentityDocumentDict = Dict[str, Any]
 
 __all__ = ("ec2_metadata",)
 
@@ -115,21 +153,22 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}ami-manifest-path").text
 
     @cached_property
-    def iam_info(self) -> dict[str, Any] | None:
+    def iam_info(self) -> IamInfoDict | None:
         resp = self._get_url(f"{self.metadata_url}iam/info", allow_404=True)
         if resp.status_code == 404:
             return None
-        return resp.json()
+        result: IamInfoDict = resp.json()
+        return result
 
     @property
-    def iam_security_credentials(self) -> dict[str, Any] | None:
+    def iam_security_credentials(self) -> IamSecurityCredentialsDict | None:
         instance_profile_name = self.instance_profile_name
         if instance_profile_name is None:
             return None
-        resp = self._get_url(
+        result: IamSecurityCredentialsDict = self._get_url(
             f"{self.metadata_url}iam/security-credentials/{instance_profile_name}",
-        )
-        return resp.json()
+        ).json()
+        return result
 
     @property
     def instance_action(self) -> str:
@@ -140,8 +179,11 @@ class EC2Metadata(BaseLazyObject):
         return self._get_url(f"{self.metadata_url}instance-id").text
 
     @cached_property
-    def instance_identity_document(self) -> dict[str, Any]:
-        return self._get_url(f"{self.dynamic_url}instance-identity/document").json()
+    def instance_identity_document(self) -> InstanceIdentityDocumentDict:
+        result: InstanceIdentityDocumentDict = self._get_url(
+            f"{self.dynamic_url}instance-identity/document"
+        ).json()
+        return result
 
     @property
     def instance_profile_arn(self) -> str | None:

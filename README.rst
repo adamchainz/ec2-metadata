@@ -164,20 +164,36 @@ to authenticate with the service.
 The domain for AWS resources for the region. E.g. ``'amazonaws.com'`` for the
 standard AWS regions and GovCloud (US), or ``'amazonaws.com.cn'`` for China.
 
-``iam_info: dict | None``
-~~~~~~~~~~~~~~~~~~~~~~~~~
+``iam_info: IamInfoDict | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A dictionary of data for the IAM role attached to the instance, or ``None`` if
-no role is attached.
+A dictionary of data for the IAM role attached to the instance, or ``None`` if no role is attached.
+The dict has this type, based on what the metadata service returns:
 
-``iam_security_credentials: dict | None``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. code-block:: python
+
+    class IamInfoDict(TypedDict):
+        InstanceProfileArn: str
+        InstanceProfileId: str
+        LastUpdated: str
+
+``iam_security_credentials: IamSecurityCredentialsDict | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary of data for the security credentials associated with the IAM role attached to the instance, or ``None`` if no role is attached.
+See the `AWS docs section “Retrieve security credentials from instance metadata” <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#instance-metadata-security-credentials>`__
+for details.
+The dict has this type, based on that document:
 
-See the `AWS docs section “Retrieve security credentials from instance metadata“
-<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/iam-roles-for-amazon-ec2.html#instance-metadata-security-credentials>`_
-for more details.
+.. code-block:: python
+
+    class IamSecurityCredentialsDict(TypedDict):
+        LastUpdated: str
+        Type: str
+        AccessKeyId: str
+        SecretAccessKey: str
+        Token: str
+        Expiration: str
 
 ``instance_action: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -193,11 +209,30 @@ for the valid values.
 
 The current instance's ID, e.g. ``'i-123456'``
 
-``instance_identity_document: dict``
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``instance_identity_document: InstanceIdentityDocumentDict``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A dictionary of dynamic data - see `AWS docs page “Instance Identity Documents”
-<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`_.
+A dictionary of dynamic data about the instance.
+See the `AWS docs page “Instance Identity Documents” <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html>`__ for an explanation of the contents.
+The dict has this type, based on that document:
+
+.. code-block:: python
+
+    class InstanceIdentityDocumentDict(TypedDict):
+        accountId: str
+        architecture: Literal["i386", "x86_64", "arm64"]
+        availabilityZone: str
+        billingProducts: list[str] | None
+        marketplaceProductCodes: list[str] | None
+        imageId: str
+        instanceId: str
+        instanceType: str
+        kernelId: str | None
+        pendingTime: str
+        privateIp: str
+        ramdiskId: str | None
+        region: str
+        version: str
 
 ``instance_profile_arn: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

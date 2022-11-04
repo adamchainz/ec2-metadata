@@ -3,7 +3,8 @@ from __future__ import annotations
 import datetime as dt
 import sys
 import time
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
+from collections.abc import Mapping
 from typing import Any
 
 import requests

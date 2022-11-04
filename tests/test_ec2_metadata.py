@@ -1,19 +1,18 @@
 from __future__ import annotations
 
 import datetime as dt
-from typing import Any, Generator
+from typing import Any
+from typing import Generator
 
 import pytest
 import requests
 from requests_mock import Mocker as RequestsMocker
 
-from ec2_metadata import (
-    TOKEN_TTL_SECONDS,
-    EC2Metadata,
-    InstanceIdentityDocumentDict,
-    NetworkInterface,
-    ec2_metadata,
-)
+from ec2_metadata import ec2_metadata
+from ec2_metadata import EC2Metadata
+from ec2_metadata import InstanceIdentityDocumentDict
+from ec2_metadata import NetworkInterface
+from ec2_metadata import TOKEN_TTL_SECONDS
 
 
 @pytest.fixture(autouse=True)

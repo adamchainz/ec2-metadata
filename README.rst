@@ -500,7 +500,7 @@ Metadata access from Docker containers
 `IMDSv2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html>`__ hop limit is set to 1 by default.
 This might prevent Docker containers accessing metadata when they're using a Docker network (e.g. bridge network not the host one).
 
-You can adjust the hop limit of your instance using the AWS CLI modify-instance-metadata-options command. 
+You can adjust the hop limit of your instance using the AWS CLI modify-instance-metadata-options command.
 
 .. code-block:: bash
 

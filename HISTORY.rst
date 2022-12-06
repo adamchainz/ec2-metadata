@@ -2,6 +2,9 @@
 History
 =======
 
+2.11.0 (2022-12-06)
+-------------------
+
 * Improve type hints for the ``iam_info``, ``iam_security_credentials``, and ``instance_identity_document`` attributes, with ``TypedDict``\s on Python 3.8+.
 
 2.10.0 (2022-05-11)

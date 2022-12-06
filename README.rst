@@ -71,6 +71,17 @@ Forgery (SSRF) attacks.
 version 1, as per
 `AWS' guide <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html#instance-metadata-transition-to-version-2>`__.
 
+**Note:** Instance Metadata Service v2 has a default IP hop limit of 1.
+This can mean that you can see ``requests.exceptions.ReadTimeout`` errors from within Docker containers.
+To solve this, reconfigure your EC2 instance’s metadata options to allow three hops with |aws ec2 modify-instance-metadata-options|__:
+
+.. |aws ec2 modify-instance-metadata-options| replace:: ``aws ec2 modify-instance-metadata-options``
+__ https://docs.aws.amazon.com/cli/latest/reference/ec2/modify-instance-metadata-options.html
+
+.. code-block:: bash
+
+    aws ec2 modify-instance-metadata-options  --instance-id <instance-id> --http-put-response-hop-limit 3
+
 API
 ===
 
@@ -489,21 +500,3 @@ doesn’t have any such CIDR blocks, the list will be empty.
 The list of IPv6 CIDR blocks of the VPC in which the interface resides, e.g.
 ``['2001:db8:abcd:ef00::/56']``. If the VPC does not have any IPv6 CIDR blocks
 or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
-
-
-Frequently Asked Questions
-==========================
-
-Metadata access from Docker containers
---------------------------------------
-
-`IMDSv2 <https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html>`__ hop limit is set to 1 by default.
-This might prevent Docker containers accessing metadata when they're using a Docker network (e.g. bridge network not the host one).
-
-You can adjust the hop limit of your instance using the AWS CLI modify-instance-metadata-options command.
-
-.. code-block:: bash
-
-    aws ec2 modify-instance-metadata-options  --instance-id <instanceId> --http-put-response-hop-limit 3 --http-endpoint enabled
-
-Additional reference: `Fetching AWS instance metadata from within Docker container? <https://stackoverflow.com/questions/22409367/fetching-aws-instance-metadata-from-within-docker-container>`__.

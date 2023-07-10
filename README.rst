@@ -40,7 +40,7 @@ Use **pip**:
 
     python -m pip install ec2-metadata
 
-Python 3.7 to 3.12 supported.
+Python 3.8 to 3.12 supported.
 
 ----
 

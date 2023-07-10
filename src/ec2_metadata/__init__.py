@@ -5,53 +5,46 @@ import sys
 import time
 from collections.abc import Iterator
 from collections.abc import Mapping
-from typing import Any
+from functools import cached_property
+from typing import Literal
+from typing import TypedDict
 
 import requests
 
-if sys.version_info >= (3, 8):
-    from functools import cached_property
-    from typing import Literal, TypedDict
 
-    class IamInfoDict(TypedDict):
-        InstanceProfileArn: str
-        InstanceProfileId: str
-        LastUpdated: str
+class IamInfoDict(TypedDict):
+    InstanceProfileArn: str
+    InstanceProfileId: str
+    LastUpdated: str
 
-    class IamSecurityCredentialsDict(TypedDict):
-        LastUpdated: str
-        Type: str
-        AccessKeyId: str
-        SecretAccessKey: str
-        Token: str
-        Expiration: str
 
-    class InstanceIdentityDocumentDict(TypedDict):
-        # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
-        accountId: str
-        architecture: Literal["i386", "x86_64", "arm64"]
-        availabilityZone: str
-        billingProducts: list[str] | None
-        # devpayProductCodes: deprecated, not including
-        marketplaceProductCodes: list[str] | None
-        imageId: str
-        instanceId: str
-        instanceType: str
-        kernelId: str | None
-        pendingTime: str
-        privateIp: str
-        ramdiskId: str | None
-        region: str
-        version: str
+class IamSecurityCredentialsDict(TypedDict):
+    LastUpdated: str
+    Type: str
+    AccessKeyId: str
+    SecretAccessKey: str
+    Token: str
+    Expiration: str
 
-else:
-    from typing import Dict
 
-    from cached_property import cached_property
+class InstanceIdentityDocumentDict(TypedDict):
+    # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
+    accountId: str
+    architecture: Literal["i386", "x86_64", "arm64"]
+    availabilityZone: str
+    billingProducts: list[str] | None
+    # devpayProductCodes: deprecated, not including
+    marketplaceProductCodes: list[str] | None
+    imageId: str
+    instanceId: str
+    instanceType: str
+    kernelId: str | None
+    pendingTime: str
+    privateIp: str
+    ramdiskId: str | None
+    region: str
+    version: str
 
-    IamInfoDict = Dict[str, Any]
-    IamSecurityCredentialsDict = Dict[str, Any]
-    InstanceIdentityDocumentDict = Dict[str, Any]
 
 __all__ = ("ec2_metadata",)
 
@@ -450,14 +443,10 @@ class NetworkInterface(BaseLazyObject):
         return resp.text.splitlines()
 
 
-if sys.version_info >= (3, 8):
-    _ActionType = Literal["hibernate", "stop", "terminate"]
-else:
-    _ActionType = str
-
-
 class SpotInstanceAction:
-    def __init__(self, action: _ActionType, time: dt.datetime) -> None:
+    def __init__(
+        self, action: Literal["hibernate", "stop", "terminate"], time: dt.datetime
+    ) -> None:
         self.action = action
         self.time = time
 

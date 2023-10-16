@@ -30,6 +30,12 @@ A quick example:
     >>> print(ec2_metadata.instance_id)
     i-123456
 
+----
+
+**Working on a Django project?**
+Improve your skills with `one of my books <https://adamj.eu/books/>`__.
+
+----
 
 Installation
 ============
@@ -41,13 +47,6 @@ Use **pip**:
     python -m pip install ec2-metadata
 
 Python 3.8 to 3.12 supported.
-
-----
-
-**Working on a Django project?**
-Improve your skills with `one of my books <https://adamj.eu/books/>`__.
-
-----
 
 Why?
 ====

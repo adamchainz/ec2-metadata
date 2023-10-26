@@ -4,6 +4,38 @@ requires = [
   "setuptools",
 ]
 
+[project]
+name = "ec2-metadata"
+version = "2.13.0"
+description = "An easy interface to query the EC2 metadata API, with caching."
+readme = {file = "README.rst", content-type = "text/x-rst"}
+keywords = [
+  "AWS",
+  "EC2",
+  "metadata",
+]
+license = {text = "MIT"}
+authors = [{name = "Adam Johnson", email = "me@adamj.eu"}]
+requires-python = ">=3.8"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Typing :: Typed",
+]
+dependencies = [
+  "requests",
+]
+urls = {Changelog = "https://github.com/adamchainz/ec2-metadata/blob/main/CHANGELOG.rst",Funding = "https://adamj.eu/books/",Repository = "https://github.com/adamchainz/ec2-metadata"}
+
 [tool.black]
 target-version = ['py38']
 
@@ -12,6 +44,23 @@ addopts = """\
     --strict-config
     --strict-markers
     """
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = [
+    "ec2_metadata",
+    "tests",
+]
+
+[tool.coverage.paths]
+source = [
+    "src",
+    ".tox/**/site-packages",
+]
+
+[tool.coverage.report]
+show_missing = true
 
 [tool.mypy]
 mypy_path = "src/"

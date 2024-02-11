@@ -8,11 +8,11 @@ import pytest
 import requests
 from requests_mock import Mocker as RequestsMocker
 
-from ec2_metadata import ec2_metadata
+from ec2_metadata import TOKEN_TTL_SECONDS
 from ec2_metadata import EC2Metadata
 from ec2_metadata import InstanceIdentityDocumentDict
 from ec2_metadata import NetworkInterface
-from ec2_metadata import TOKEN_TTL_SECONDS
+from ec2_metadata import ec2_metadata
 
 
 @pytest.fixture(autouse=True)

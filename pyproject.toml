@@ -8,13 +8,12 @@ requires = [
 name = "ec2-metadata"
 version = "2.13.0"
 description = "An easy interface to query the EC2 metadata API, with caching."
-readme = { file = "README.rst", content-type = "text/x-rst" }
+readme = "README.rst"
 keywords = [
   "AWS",
   "EC2",
   "metadata",
 ]
-license = { text = "MIT" }
 authors = [
   { name = "Adam Johnson", email = "me@adamj.eu" },
 ]

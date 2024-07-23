@@ -297,7 +297,7 @@ else:
 
 class InstanceTags(InstanceTagsBase):
     def __init__(self, names: list[str], parent: EC2Metadata) -> None:
-        self._map: dict[str, str | None] = {name: None for name in names}
+        self._map: dict[str, str | None] = dict.fromkeys(names)
         self.parent = parent
 
     def __getitem__(self, name: str) -> str:

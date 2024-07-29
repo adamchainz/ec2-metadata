@@ -23,7 +23,7 @@ def clear_it():
 @pytest.fixture(autouse=True)
 def em_requests_mock(
     requests_mock: RequestsMocker,
-) -> Generator[RequestsMocker, None, None]:
+) -> Generator[RequestsMocker]:
     requests_mock.put(
         "http://169.254.169.254/latest/api/token",
         headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},

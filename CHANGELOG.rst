@@ -2,6 +2,9 @@
 Changelog
 =========
 
+2.14.0 (2024-10-27)
+-------------------
+
 * Add ``instance_life_cycle`` attribute.
 
   Thanks to Zeev Rotshtein for the feature request in `Issue #440 <https://github.com/adamchainz/ec2-metadata/issues/440>`__.

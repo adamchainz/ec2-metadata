@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import datetime as dt
-import sys
 import time
 from collections.abc import Iterator
 from collections.abc import Mapping
@@ -289,13 +288,7 @@ class EC2Metadata(BaseLazyObject):
         return resp.content
 
 
-if sys.version_info > (3, 9):
-    InstanceTagsBase = Mapping[str, str]
-else:
-    InstanceTagsBase = Mapping
-
-
-class InstanceTags(InstanceTagsBase):
+class InstanceTags(Mapping[str, str]):
     def __init__(self, names: list[str], parent: EC2Metadata) -> None:
         self._map: dict[str, str | None] = dict.fromkeys(names)
         self.parent = parent

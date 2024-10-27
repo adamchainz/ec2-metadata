@@ -178,6 +178,10 @@ class EC2Metadata(BaseLazyObject):
         ).json()
         return result
 
+    @cached_property
+    def instance_life_cycle(self) -> str:
+        return self._get_url(f"{self.metadata_url}instance-life-cycle").text
+
     @property
     def instance_profile_arn(self) -> str | None:
         iam_info = self.iam_info

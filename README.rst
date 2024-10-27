@@ -124,12 +124,12 @@ To clear all, use the ``clear_all()`` method as per below.
 ``account_id: str``
 ~~~~~~~~~~~~~~~~~~~
 
-The current AWS account ID, e.g. ``'123456789012'``.
+The current AWS account ID, for example ``'123456789012'``.
 
 ``ami_id: str``
 ~~~~~~~~~~~~~~~
 
-The ID of the AMI used to launch the instance, e.g. ``'ami-123456'``.
+The ID of the AMI used to launch the instance, for example ``'ami-123456'``.
 
 ``autoscaling_target_lifecycle_state: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,19 +141,19 @@ See AWS docs page `Retrieve the target lifecycle state through instance metadata
 ``availability_zone: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The name of the current AZ e.g. ``'eu-west-1a'``.
+The name of the current AZ, for example ``'eu-west-1a'``.
 
 ``availability_zone_id: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The unique, cross-account ID of the current AZ e.g. ``'use1-az6'``.
+The unique, cross-account ID of the current AZ, for example ``'use1-az6'``.
 See AWS docs page `AZ IDs for your AWS resources
 <https://docs.aws.amazon.com/ram/latest/userguide/working-with-az-ids.html>`__.
 
 ``ami_launch_index: int``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The index of the instance in the launch request, zero-based, e.g. ``0``.
+The index of the instance in the launch request, zero-based, for example ``0``.
 
 ``ami_manifest_path: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -171,7 +171,7 @@ to authenticate with the service.
 ``domain: str``
 ~~~~~~~~~~~~~~~
 
-The domain for AWS resources for the region. E.g. ``'amazonaws.com'`` for the
+The domain for AWS resources for the region. For example, ``'amazonaws.com'`` for the
 standard AWS regions and GovCloud (US), or ``'amazonaws.com.cn'`` for China.
 
 ``iam_info: IamInfoDict | None``
@@ -217,7 +217,7 @@ for the valid values.
 ``instance_id: str``
 ~~~~~~~~~~~~~~~~~~~~
 
-The current instance's ID, e.g. ``'i-123456'``
+The current instance's ID, for example ``'i-123456'``.
 
 ``instance_identity_document: InstanceIdentityDocumentDict``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -265,71 +265,71 @@ The instance profile name, extracted from ``instance_profile_arn``, or ``None`` 
 ``instance_type: str``
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The current instance's type, e.g. ``'t2.nano'``
+The current instance's type, for example ``'t2.nano'``.
 
 ``kernel_id: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The current instance's kernel ID, or ``None`` if it doesn't have one, e.g.
-``'aki-dc9ed9af'``.
+The current instance's kernel ID, or ``None`` if it doesn't have one,
+for example ``'aki-dc9ed9af'``.
 
 ``mac : str``
 ~~~~~~~~~~~~~
 
-The instance's MAC address, e.g. ``'0a:d2:ae:4d:f3:12'``
+The instance's MAC address, for example ``'0a:d2:ae:4d:f3:12'``.
 
 ``network_interfaces: dict[str, NetworkInterface]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary of mac address to ``NetworkInterface``, which represents the data
-available on a network interface - see below. E.g.
+available on a network interface - see below. For example:
 ``{'01:23:45:67:89:ab': NetworkInterface('01:23:45:67:89:ab')}``
 
 ``partition: str``
 ~~~~~~~~~~~~~~~~~~
 
-The AWS partition where the instance is running. E.g. ``'aws'`` for the
+The AWS partition where the instance is running. For example, ``'aws'`` for the
 standard AWS regions, ``'aws-us-gov'`` for GovCloud (US), or ``'aws-cn'``
 for China.
 
 ``private_hostname : str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The private IPv4 DNS hostname of the instance, e.g.
+The private IPv4 DNS hostname of the instance, for example
 ``'ip-172-30-0-0.eu-west-1.compute.internal'`` .
 
 ``private_ipv4: str``
 ~~~~~~~~~~~~~~~~~~~~~
 
-The private IPv4 of the instance, e.g. ``'172.30.0.0'``.
+The private IPv4 of the instance, for example ``'172.30.0.0'``.
 
 ``public_hostname : str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The public DNS hostname of the instance, or ``None`` if the instance is not
-public, e.g. ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
+public, for example ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
 
 ``public_ipv4: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The public IPv4 address of the instance, or ``None`` if the instance is not
-public, e.g. ``'1.2.3.4'``.
+public, for example ``'1.2.3.4'``.
 
 ``region: str``
 ~~~~~~~~~~~~~~~
 
-The region the instance is running in, e.g. ``'eu-west-1'``.
+The region the instance is running in, for example ``'eu-west-1'``.
 
 ``reservation_id: str``
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-The ID of the reservation used to launch the instance, e.g.
+The ID of the reservation used to launch the instance, for example
 ``'r-12345678901234567'``.
 
 ``security_groups : list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-List of security groups by name, e.g. ``['ssh-access', 'custom-sg-1']``.
+List of security groups by name, for example ``['ssh-access', 'custom-sg-1']``.
 
 ``spot_instance_action: SpotInstanceAction | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -391,111 +391,111 @@ its ``clear_all()`` method.
 ``device_number: int``
 ~~~~~~~~~~~~~~~~~~~~~~
 
-The unique device number associated with that interface, e.g. ``0``.
+The unique device number associated with that interface, for example ``0``.
 
 ``interface_id: str``
 ~~~~~~~~~~~~~~~~~~~~~
 
-The unique id used to identify the Elastic Network Interface, e.g. ``'eni-12345'``.
+The unique id used to identify the Elastic Network Interface, for example ``'eni-12345'``.
 
 ``ipv4_associations: dict[str, list[str]]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 A dictionary mapping public IP addresses on the interface to the list of
 private IP addresses associated with that public IP, for each public IP that is
-associated with the interface, e.g. ``{'54.0.0.1': ['172.30.0.0']}``.
+associated with the interface, for example ``{'54.0.0.1': ['172.30.0.0']}``.
 
 ``ipv6s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~
 
-The IPv6 addresses associated with the interface, e.g.
+The IPv6 addresses associated with the interface, for example
 ``['2001:db8:abcd:ef00::1234']``.
 
 ``mac: str``
 ~~~~~~~~~~~~
 
-The MAC address of the interface, e.g. ``'01:23:45:67:89:ab'``.
+The MAC address of the interface, for example ``'01:23:45:67:89:ab'``.
 
 ``owner_id: str``
 ~~~~~~~~~~~~~~~~~
 
-The AWS Account ID of the owner of the network interface, e.g.
+The AWS Account ID of the owner of the network interface, for example
 ``'123456789012'``.
 
 ``private_hostname: str``
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The interface's local/private hostname, e.g.
+The interface's local/private hostname, for example
 ``'ip-172-30-0-0.eu-west-1.compute.internal'``.
 
 ``private_ipv4s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The private IPv4 addresses associated with the interface, e.g.
+The private IPv4 addresses associated with the interface, for example
 ``['172.30.0.0']``.
 
 ``public_hostname: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The interface's public DNS (IPv4), e.g.
+The interface's public DNS (IPv4), for example
 ``'ec2-54-0-0-0.compute-1.amazonaws.com'``.
 
 ``public_ipv4s: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The Elastic IP addresses associated with the interface, e.g. ``['54.0.0.0']``.
+The Elastic IP addresses associated with the interface, for example ``['54.0.0.0']``.
 
 ``security_groups: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The names of the security groups to which the network interface belongs, e.g.
+The names of the security groups to which the network interface belongs, for example
 ``['ssh-access', 'custom-sg-1']``.
 
 ``security_group_ids: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The names of the security groups to which the network interface belongs, e.g.
+The names of the security groups to which the network interface belongs, for example
 ``['sg-12345678', 'sg-12345679']``.
 
 ``subnet_id: str``
 ~~~~~~~~~~~~~~~~~~
 
-The ID of the subnet in which the interface resides, e.g.
+The ID of the subnet in which the interface resides, for example
 ``'subnet-12345678'``.
 
 ``subnet_ipv4_cidr_block: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The IPv4 CIDR block of the subnet in which the interface resides, or ``None``
-if there is none, e.g. ``'172.30.0.0/24'``.
+if there is none, for example ``'172.30.0.0/24'``.
 
 ``subnet_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The list of IPv6 CIDR blocks of the subnet in which the interface resides, e.g.
+The list of IPv6 CIDR blocks of the subnet in which the interface resides, for example
 ``['2001:db8:abcd:ef00::/64']``. If the subnet does not have any IPv6 CIDR
-blocks or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
+blocks or the instance isn't in a VPC, the list will be empty, for example ``[]``.
 
 ``vpc_id: str``
 ~~~~~~~~~~~~~~~
 
-The ID of the VPC in which the interface resides, e.g. ``'vpc-12345678'``.
+The ID of the VPC in which the interface resides, for example ``'vpc-12345678'``.
 
 ``vpc_ipv4_cidr_block: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 The IPv4 CIDR block of the VPC, or ``None`` if the instance isn't in a VPC,
-e.g. ``'172.30.0.0/16'``.
+for example ``'172.30.0.0/16'``.
 
 ``vpc_ipv4_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The list of IPv4 CIDR blocks e.g. ``['172.30.0.0/16']``. If the interface
+The list of IPv4 CIDR blocks for example ``['172.30.0.0/16']``. If the interface
 doesn’t have any such CIDR blocks, the list will be empty.
 
 ``vpc_ipv6_cidr_blocks: list[str]``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The list of IPv6 CIDR blocks of the VPC in which the interface resides, e.g.
+The list of IPv6 CIDR blocks of the VPC in which the interface resides, for example
 ``['2001:db8:abcd:ef00::/56']``. If the VPC does not have any IPv6 CIDR blocks
-or the instance isn't in a VPC, the list will be empty, e.g. ``[]``.
+or the instance isn't in a VPC, the list will be empty, for example ``[]``.

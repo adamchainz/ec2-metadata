@@ -91,7 +91,7 @@ A container that represents the data available on the EC2 metadata service.
 Attributes don't entirely correspond to the paths in the metadata service -
 they have been 'cleaned up'. You may also want to refer to the `metadata
 service docs
-<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instancedata-data-categories.html>`_
+<https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html>`_
 to understand the exact contents.
 
 There's a singleton instance of it at the name ``ec2_metadata`` which should

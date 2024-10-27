@@ -2,6 +2,10 @@
 Changelog
 =========
 
+* Add ``instance_life_cycle`` attribute.
+
+  Thanks to Zeev Rotshtein for the feature request in `Issue #440 <https://github.com/adamchainz/ec2-metadata/issues/440>`__.
+
 * Drop Python 3.8 support.
 
 * Support Python 3.13.

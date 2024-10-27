@@ -244,6 +244,11 @@ The dict has this type, based on that document:
         region: str
         version: str
 
+``instance_life_cycle: str``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The purchasing option of this instance, for example ``'on-demand'``.
+
 ``instance_profile_arn: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

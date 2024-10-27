@@ -268,6 +268,13 @@ def test_instance_identity(em_requests_mock):
     assert ec2_metadata.instance_identity_document == identity_doc
 
 
+def test_instance_life_cycle(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/instance-life-cycle", text="on-demand"
+    )
+    assert ec2_metadata.instance_life_cycle == "on-demand"
+
+
 def test_instance_profile_arn(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info",

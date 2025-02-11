@@ -1,7 +1,0 @@
-cached-property
-coverage[toml]
-pygments
-pytest
-pytest-randomly
-requests
-requests-mock

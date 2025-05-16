@@ -130,7 +130,7 @@ Changelog
 1.7.1 (2018-09-17)
 ------------------
 
-* Fix doucmentation rendering on PyPI.
+* Fix documentation rendering on PyPI.
 
 1.7.0 (2018-09-17)
 ------------------

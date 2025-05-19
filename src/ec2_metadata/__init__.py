@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import datetime as dt
 import time
-from collections.abc import Iterator
-from collections.abc import Mapping
+from collections.abc import Iterator, Mapping
 from functools import cached_property
-from typing import Literal
-from typing import TypedDict
+from typing import Literal, TypedDict
 
 import requests
 

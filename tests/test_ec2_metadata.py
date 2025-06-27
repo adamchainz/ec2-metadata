@@ -13,6 +13,7 @@ from ec2_metadata import (
     EC2Metadata,
     InstanceIdentityDocumentDict,
     NetworkInterface,
+    PublicKey,
     ec2_metadata,
 )
 
@@ -35,7 +36,7 @@ def em_requests_mock(
 
 
 example_mac = "00:11:22:33:44:55"
-
+example_public_key = "ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n"
 
 # EC2Metadata tests
 
@@ -404,6 +405,19 @@ def test_public_ipv4_none(em_requests_mock):
     )
     assert ec2_metadata.public_ipv4 is None
 
+def test_public_keys(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/public-keys/", text="0=somekey"
+    )
+    assert ec2_metadata.public_keys == {
+        "somekey": PublicKey(0, ec2_metadata)
+    }
+
+def test_public_keys_none(em_requests_mock):
+    em_requests_mock.get(
+        "http://169.254.169.254/latest/meta-data/public-keys/", status_code=404
+    )
+    assert ec2_metadata.public_keys == {}
 
 def test_region(em_requests_mock):
     add_identity_doc_response(em_requests_mock, region="eu-whatever-1")
@@ -751,3 +765,43 @@ def test_network_interface_vpc_ipv6_cidr_blocks(em_requests_mock):
 def test_network_interface_vpc_ipv6_cidr_blocks_none(em_requests_mock):
     add_interface_response(em_requests_mock, "/vpc-ipv6-cidr-blocks", status_code=404)
     assert NetworkInterface(example_mac).vpc_ipv6_cidr_blocks == []
+
+
+# PublicKey tests
+
+
+def add_key_response(
+        em_requests_mock: RequestsMocker, index: int, url: str, text: str = "", **kwargs: Any
+) -> None:
+    full_url = (
+        "http://169.254.169.254/latest/meta-data/public-keys/"
+        + str(index)
+        + url
+    )
+    em_requests_mock.get(full_url, text=text, **kwargs)
+
+
+def test_public_key_equal():
+    assert PublicKey(0) == PublicKey(0)
+
+
+def test_public_key_not_equal():
+    assert PublicKey(0) != PublicKey(1)
+
+
+def test_public_key_not_equal_class():
+    assert PublicKey(0) != 0
+
+
+def test_public_key_repr():
+    assert "0" in repr(PublicKey(0))
+
+
+def test_public_key_openssh_key(em_requests_mock):
+    add_key_response(em_requests_mock, 0, "/openssh-key", example_public_key)
+    assert PublicKey(0).openssh_key == example_public_key
+
+
+def test_public_key_openssh_key_none(em_requests_mock):
+    add_key_response(em_requests_mock, 0, "/openssh-key", status_code=404)
+    assert PublicKey(0).openssh_key is None

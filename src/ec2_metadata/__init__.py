@@ -245,6 +245,14 @@ class EC2Metadata(BaseLazyObject):
         return resp.text
 
     @cached_property
+    def public_keys(self) -> dict[str, PublicKey]:
+        resp = self._get_url(f"{self.metadata_url}public-keys/", allow_404=True)
+        if resp.status_code == 404:
+            return {}
+        pairs = [line.split("=", 1) for line in resp.text.splitlines()]
+        return {name: PublicKey(int(index), self) for index, name in pairs} 
+
+    @cached_property
     def partition(self) -> str:
         return self._get_url(f"{self.metadata_url}services/partition").text
 
@@ -436,6 +444,35 @@ class NetworkInterface(BaseLazyObject):
         if resp.status_code == 404:
             return []
         return resp.text.splitlines()
+
+
+class PublicKey(BaseLazyObject):
+    def __init__(self, index: int, parent: EC2Metadata | None = None) -> None:
+        self.index = index
+        if parent is None:
+            self.parent = ec2_metadata
+        else:
+            self.parent = parent
+
+    def __repr__(self) -> str:
+        return f"PublicKey({repr(self.index)})"
+
+    def __eq__(self, other: object) -> bool:
+        return (
+            isinstance(other, PublicKey)
+            and self.index == other.index
+            and self.parent == other.parent
+        )
+
+    def _url(self, item: str) -> str:
+        return f"{self.parent.metadata_url}public-keys/{self.index}/{item}"
+
+    @cached_property
+    def openssh_key(self) -> str | None:
+        resp = self.parent._get_url(self._url("openssh-key"), allow_404=True)
+        if resp.status_code == 404:
+            return None
+        return resp.text
 
 
 class SpotInstanceAction:

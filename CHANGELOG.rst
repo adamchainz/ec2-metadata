@@ -2,6 +2,8 @@
 Changelog
 =========
 
+* Add ``public_keys`` attribute and ``PublicKey`` class.
+
 2.14.0 (2024-10-27)
 -------------------
 

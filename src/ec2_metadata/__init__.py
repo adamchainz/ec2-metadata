@@ -250,7 +250,7 @@ class EC2Metadata(BaseLazyObject):
         if resp.status_code == 404:
             return {}
         pairs = [line.split("=", 1) for line in resp.text.splitlines()]
-        return {name: PublicKey(int(index), self) for index, name in pairs} 
+        return {name: PublicKey(int(index), self) for index, name in pairs}
 
     @cached_property
     def partition(self) -> str:

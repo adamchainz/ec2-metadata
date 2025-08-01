@@ -778,8 +778,11 @@ def add_key_response(
     text: str = "",
     **kwargs: Any,
 ) -> None:
-    full_url = "http://169.254.169.254/latest/meta-data/public-keys/" + str(index) + url
-    em_requests_mock.get(full_url, text=text, **kwargs)
+    em_requests_mock.get(
+        f"http://169.254.169.254/latest/meta-data/public-keys/{index}{url}",
+        text=text,
+        **kwargs,
+    )
 
 
 def test_public_key_equal():

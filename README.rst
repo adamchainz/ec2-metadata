@@ -489,7 +489,5 @@ Again like ``EC2Metadata`` all its attributes cache on first access, and can be 
 ``openssh_key: str | None``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The SSH public key in OpenSSH format, for example ``ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n``.
-Note the presence of the trailing newline character.
-If the key is not available in OpenSSH format, this will be ``None``.
-Note that OpenSSH format is currently the only documented key format.
+The SSH public key in OpenSSH format, with a trailing newline, for example: ``ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n``.
+If the key is not available in OpenSSH format, this will be ``None``, however that is unlikely as that is the only format currently supported by the metadata service.

@@ -303,6 +303,14 @@ For example: ``'ec2-1-2-3-4.compute-1.amazonaws.com'``.
 The public IPv4 address of the instance, or ``None`` if the instance is not public.
 For example: ``'1.2.3.4'``.
 
+``public_keys: dict[str, PublicKey]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+A dictionary of key name to ``PublicKey``, which represents data available on an SSH public key, documented below.
+These keys represent the SSH keys authorized to log into the instance when it was created.
+For example: ``{'somekey': PublicKey(0)}``
+If no public keys are available, this will be an empty dictionary.
+
 ``region: str``
 ~~~~~~~~~~~~~~~
 
@@ -471,3 +479,15 @@ If the interface doesn’t have any such CIDR blocks, the list will be empty.
 
 The list of IPv6 CIDR blocks of the VPC in which the interface resides, for example ``['2001:db8:abcd:ef00::/56']``.
 If the VPC does not have any IPv6 CIDR blocks or the instance isn't in a VPC, the list will be empty, for example ``[]``.
+
+``PublicKey``
+-------------
+
+Represents a single SSH public key, as retrieved from ``EC2Metadata.public_keys``.
+Again like ``EC2Metadata`` all its attributes cache on first access, and can be cleared with ``del`` or its ``clear_all()`` method.
+
+``openssh_key: str | None``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The SSH public key in OpenSSH format, with a trailing newline, for example: ``ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n``.
+If the key is not available in OpenSSH format, this will be ``None``, however that is unlikely as that is the only format currently supported by the metadata service.

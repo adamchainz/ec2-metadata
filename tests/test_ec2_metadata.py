@@ -227,7 +227,7 @@ def test_iam_security_credentials(em_requests_mock):
     profile = "myInstanceProfile"
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info",
-        text='{"InstanceProfileArn": "arn:foobar/' + profile + '"}',
+        json={"InstanceProfileArn": f"arn:foobar/{profile}"},
     )
     result = {
         "LastUpdated": "2022-08-12T10:48:52Z",
@@ -347,7 +347,7 @@ def test_mac(em_requests_mock):
 def test_network_interfaces(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/network/interfaces/macs/",
-        text=example_mac + "/",
+        text=f"{example_mac}/",
     )
     assert ec2_metadata.network_interfaces == {
         example_mac: NetworkInterface(example_mac, ec2_metadata)
@@ -578,12 +578,11 @@ def test_user_data_something(em_requests_mock):
 def add_interface_response(
     em_requests_mock: RequestsMocker, url: str, text: str = "", **kwargs: Any
 ) -> None:
-    full_url = (
-        "http://169.254.169.254/latest/meta-data/network/interfaces/macs/"
-        + example_mac
-        + url
+    em_requests_mock.get(
+        f"http://169.254.169.254/latest/meta-data/network/interfaces/macs/{example_mac}{url}",
+        text=text,
+        **kwargs,
     )
-    em_requests_mock.get(full_url, text=text, **kwargs)
 
 
 def test_network_interface_equal():

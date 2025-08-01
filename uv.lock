@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.9"
 
 [[package]]
@@ -184,7 +184,7 @@ toml = [
 
 [[package]]
 name = "ec2-metadata"
-version = "2.14.0"
+version = "2.15.0"
 source = { editable = "." }
 dependencies = [
     { name = "requests" },

@@ -2,6 +2,9 @@
 Changelog
 =========
 
+2.15.0 (2025-08-01)
+-------------------
+
 * Add ``public_keys`` attribute and ``PublicKey`` class.
 
   Thanks to Adam Novak in `PR #562 <https://github.com/adamchainz/ec2-metadata/pull/562>`__.

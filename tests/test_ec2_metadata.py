@@ -6,6 +6,7 @@ from typing import Any
 
 import pytest
 import requests
+from requests.exceptions import HTTPError
 from requests_mock import Mocker as RequestsMocker
 
 from ec2_metadata import (
@@ -88,7 +89,7 @@ def test_account_id_token_error(requests_mock):
         headers={"X-aws-ec2-metadata-token-ttl-seconds": str(TOKEN_TTL_SECONDS)},
         status_code=500,
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(HTTPError):
         ec2_metadata.account_id  # noqa: B018
 
 
@@ -97,7 +98,7 @@ def test_account_id_error(em_requests_mock):
         "http://169.254.169.254/latest/dynamic/instance-identity/document",
         status_code=500,
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(HTTPError):
         ec2_metadata.account_id  # noqa: B018
 
 
@@ -130,7 +131,7 @@ def test_ami_id_cached_cleared(em_requests_mock):
         "http://169.254.169.254/latest/meta-data/ami-id", status_code=500
     )
 
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(HTTPError):
         ec2_metadata.ami_id  # noqa: B018
 
 
@@ -219,7 +220,7 @@ def test_iam_info_unexpected(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/iam/info", status_code=500
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(HTTPError):
         ec2_metadata.iam_info  # noqa: B018
 
 
@@ -483,7 +484,7 @@ def test_tags_not_enabled(em_requests_mock):
     em_requests_mock.get(
         "http://169.254.169.254/latest/meta-data/tags/instance/", status_code=404
     )
-    with pytest.raises(requests.exceptions.HTTPError):
+    with pytest.raises(HTTPError):
         ec2_metadata.tags  # noqa: B018
 
 

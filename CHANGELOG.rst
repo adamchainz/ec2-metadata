@@ -2,6 +2,11 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Add ``ipv6-prefix`` attribute and ``NetworkInterface`` class.
+
 2.16.0 (2025-09-09)
 -------------------
 

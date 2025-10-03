@@ -367,6 +367,13 @@ class NetworkInterface(BaseLazyObject):
         return resp.text.splitlines()
 
     @cached_property
+    def ipv6_prefix(self) -> list[str]:
+        resp = self.parent._get_url(self._url("ipv6-prefix"), allow_404=True)
+        if resp.status_code == 404:
+            return []
+        return resp.text.splitlines()
+
+    @cached_property
     def owner_id(self) -> str:
         return self.parent._get_url(self._url("owner-id")).text
 

@@ -642,6 +642,22 @@ def test_network_interface_ipv6s_none(em_requests_mock):
     add_interface_response(em_requests_mock, "/ipv6s", status_code=404)
     assert NetworkInterface(example_mac).ipv6s == []
 
+def test_network_interface_ipv6_prefix(em_requests_mock):
+    add_interface_response(
+        em_requests_mock,
+        "/ipv6-prefix",
+        "2001:db8:abcd:ef00:cbe5:::/80\n2001:db8:abcd:ef00:cbe6:::/80",
+    )
+    assert NetworkInterface(example_mac).ipv6_prefix == [
+        "2001:db8:abcd:ef00:cbe5:::/80",
+        "2001:db8:abcd:ef00:cbe6:::/80",
+    ]
+
+
+def test_network_interface_ipv6_prefix_none(em_requests_mock):
+    add_interface_response(em_requests_mock, "/ipv6-prefix", status_code=404)
+    assert NetworkInterface(example_mac).ipv6_prefix == []
+
 
 def test_network_interface_owner_id(em_requests_mock):
     add_interface_response(em_requests_mock, "/owner-id", "123456789012")

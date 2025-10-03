@@ -642,6 +642,7 @@ def test_network_interface_ipv6s_none(em_requests_mock):
     add_interface_response(em_requests_mock, "/ipv6s", status_code=404)
     assert NetworkInterface(example_mac).ipv6s == []
 
+
 def test_network_interface_ipv6_prefix(em_requests_mock):
     add_interface_response(
         em_requests_mock,

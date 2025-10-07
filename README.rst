@@ -402,6 +402,11 @@ For example: ``{'54.0.0.1': ['172.30.0.0']}``.
 
 The IPv6 addresses associated with the interface, for example ``['2001:db8:abcd:ef00::1234']``.
 
+``ipv6_prefix: list[str]``
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The IPv6 prefixes associated with the interface, for example ``['2001:db8:abcd:ef00:::/80']``.
+
 ``mac: str``
 ~~~~~~~~~~~~
 

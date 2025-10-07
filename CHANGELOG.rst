@@ -2,6 +2,13 @@
 Changelog
 =========
 
+Unreleased
+----------
+
+* Add ``NetworkInterface.ipv6_prefix`` attribute.
+
+  Thanks to Matthew Beaumont in `PR #572 <https://github.com/adamchainz/ec2-metadata/pull/572>`__.
+
 2.16.0 (2025-09-09)
 -------------------
 

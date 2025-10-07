@@ -2,8 +2,8 @@
 Changelog
 =========
 
-Unreleased
-----------
+2.17.0 (2025-10-07)
+-------------------
 
 * Add ``NetworkInterface.ipv6_prefix`` attribute.
 

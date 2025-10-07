@@ -6,7 +6,7 @@ requires = [
 
 [project]
 name = "ec2-metadata"
-version = "2.16.0"
+version = "2.17.0"
 description = "An easy interface to query the EC2 metadata API, with caching."
 readme = "README.rst"
 keywords = [

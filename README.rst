@@ -93,10 +93,10 @@ Use it like:
 
     ec2_metadata.region
 
-The ``session`` argument, if provided, should be an instance of |requests.Session|__, allowing you to customize the way requests are made.
+The ``session`` argument, if provided, should be an instance of |urllib3.PoolManager|__, allowing you to customize the way requests are made.
 
-.. |requests.Session| replace:: ``requests.Session``
-__ https://docs.python-requests.org/en/latest/user/advanced/
+.. |urllib3.PoolManager| replace:: ``urllib3.PoolManager``
+__ https://urllib3.readthedocs.io/en/stable/reference/urllib3.poolmanager.html
 
 Most of the attributes are cached, except where noted below.
 This is because they are mostly immutable, or at least require an instance stop to change.

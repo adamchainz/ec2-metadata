@@ -2,6 +2,11 @@
 Changelog
 =========
 
+* Migrate from ``requests`` to ``urllib3`` dependency.
+
+  This reduces the number of dependencies and simplifies the codebase.
+  The ``session`` argument of ``EC2Metadata`` now accepts ``urllib3.PoolManager`` instead of ``requests.Session``.
+
 2.17.0 (2025-10-07)
 -------------------
 

@@ -4,9 +4,12 @@ import datetime as dt
 import time
 from collections.abc import Iterator, Mapping
 from functools import cached_property
-from typing import Literal, TypedDict
+from typing import TYPE_CHECKING, Literal, TypedDict
 
-import requests
+import urllib3
+
+if TYPE_CHECKING:
+    from urllib3.response import HTTPResponse
 
 
 class IamInfoDict(TypedDict):
@@ -52,6 +55,36 @@ TOKEN_HEADER = "X-aws-ec2-metadata-token"
 TOKEN_HEADER_TTL = "X-aws-ec2-metadata-token-ttl-seconds"
 
 
+class _Response:
+    """Wrapper for urllib3 response to provide a requests-like interface."""
+
+    def __init__(self, response: HTTPResponse) -> None:
+        self._response = response
+
+    @property
+    def status_code(self) -> int:
+        return int(self._response.status)
+
+    @property
+    def text(self) -> str:
+        data = self._response.data
+        if isinstance(data, bytes):
+            return data.decode("utf-8")
+        return str(data)
+
+    @property
+    def content(self) -> bytes:
+        data = self._response.data
+        if isinstance(data, bytes):
+            return data
+        return str(data).encode("utf-8")
+
+    def json(self) -> dict[str, object]:
+        import json as json_module
+
+        return json_module.loads(self.text)  # type: ignore[no-any-return]
+
+
 class BaseLazyObject:
     def clear_all(self) -> None:
         for key in tuple(self.__dict__.keys()):
@@ -62,12 +95,13 @@ class BaseLazyObject:
 class EC2Metadata(BaseLazyObject):
     def __init__(
         self,
-        session: requests.Session | None = None,
+        session: urllib3.PoolManager | None = None,
     ) -> None:
         if session is None:
-            session = requests.Session()
+            session = urllib3.PoolManager()
         self._session = session
         self._token_updated_at = 0.0
+        self._token: str = ""
 
         # Previously we used a fixed version of the service, rather than 'latest', in
         # case any backward incompatible changes were made. It seems metadata service
@@ -81,27 +115,36 @@ class EC2Metadata(BaseLazyObject):
         now = time.time()
         # Refresh up to 60 seconds before expiry
         if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
-            token_response = self._session.put(
+            token_response = self._session.request(  # type: ignore[no-untyped-call]
+                "PUT",
                 f"{self.service_url}api/token",
                 headers={TOKEN_HEADER_TTL: str(TOKEN_TTL_SECONDS)},
                 timeout=5.0,
             )
-            if token_response.status_code != 200:
-                token_response.raise_for_status()
-            token = token_response.text
-            self._session.headers.update({TOKEN_HEADER: token})
+            if token_response.status != 200:
+                raise urllib3.exceptions.HTTPError(
+                    f"Token request failed with status {token_response.status}"
+                )
+            data = token_response.data
+            if isinstance(data, bytes):
+                self._token = data.decode("utf-8")
+            else:
+                self._token = str(data)
             self._token_updated_at = now
 
-    def _get_url(self, url: str, allow_404: bool = False) -> requests.Response:
+    def _get_url(self, url: str, allow_404: bool = False) -> _Response:
         self._ensure_token_is_fresh()
-        resp = self._session.get(url, timeout=1.0)
-        if resp.status_code != 404 or not allow_404:
-            resp.raise_for_status()
-        return resp
+        headers = {TOKEN_HEADER: self._token} if self._token else {}
+        resp = self._session.request("GET", url, headers=headers, timeout=1.0)  # type: ignore[no-untyped-call]
+        if (resp.status != 404 or not allow_404) and resp.status >= 400:
+            raise urllib3.exceptions.HTTPError(
+                f"Request to {url} failed with status {resp.status}"
+            )
+        return _Response(resp)
 
     def clear_all(self) -> None:
         super().clear_all()
-        self._session.headers.pop(TOKEN_HEADER, None)
+        self._token = ""
         self._token_updated_at = 0
 
     @property
@@ -148,18 +191,18 @@ class EC2Metadata(BaseLazyObject):
         resp = self._get_url(f"{self.metadata_url}iam/info", allow_404=True)
         if resp.status_code == 404:
             return None
-        result: IamInfoDict = resp.json()
-        return result
+        result = resp.json()
+        return result  # type: ignore[return-value]
 
     @property
     def iam_security_credentials(self) -> IamSecurityCredentialsDict | None:
         instance_profile_name = self.instance_profile_name
         if instance_profile_name is None:
             return None
-        result: IamSecurityCredentialsDict = self._get_url(
+        result = self._get_url(
             f"{self.metadata_url}iam/security-credentials/{instance_profile_name}",
         ).json()
-        return result
+        return result  # type: ignore[return-value]
 
     @property
     def instance_action(self) -> str:
@@ -171,10 +214,10 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def instance_identity_document(self) -> InstanceIdentityDocumentDict:
-        result: InstanceIdentityDocumentDict = self._get_url(
+        result = self._get_url(
             f"{self.dynamic_url}instance-identity/document"
         ).json()
-        return result
+        return result  # type: ignore[return-value]
 
     @cached_property
     def instance_life_cycle(self) -> str:
@@ -278,9 +321,13 @@ class EC2Metadata(BaseLazyObject):
         if resp.status_code == 404:
             return None
         data = resp.json()
+        action_str = data.get("action")
+        time_str = data.get("time")
+        if not isinstance(action_str, str) or not isinstance(time_str, str):
+            return None
         return SpotInstanceAction(
-            data["action"],
-            dt.datetime.fromisoformat(data["time"].rstrip("Z")).replace(
+            action_str,  # type: ignore[arg-type]
+            dt.datetime.fromisoformat(time_str.rstrip("Z")).replace(
                 tzinfo=dt.timezone.utc
             ),
         )

@@ -35,7 +35,7 @@ classifiers = [
   "Typing :: Typed",
 ]
 dependencies = [
-  "requests",
+  "urllib3",
 ]
 urls = { Changelog = "https://github.com/adamchainz/ec2-metadata/blob/main/CHANGELOG.rst", Funding = "https://adamj.eu/books/", Repository = "https://github.com/adamchainz/ec2-metadata" }
 
@@ -46,8 +46,6 @@ test = [
   "pygments",
   "pytest",
   "pytest-randomly",
-  "requests",
-  "requests-mock",
 ]
 
 [tool.ruff]

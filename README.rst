@@ -46,7 +46,7 @@ Use **pip**:
 
     python -m pip install ec2-metadata
 
-Python 3.9 to 3.14 supported.
+Python 3.10 to 3.14 supported.
 
 Why?
 ====

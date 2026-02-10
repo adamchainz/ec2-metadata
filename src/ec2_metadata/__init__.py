@@ -6,7 +6,7 @@ from collections.abc import Iterator, Mapping
 from functools import cached_property
 from typing import Literal, TypedDict
 
-import requests
+import urllib3
 
 
 class IamInfoDict(TypedDict):
@@ -62,11 +62,12 @@ class BaseLazyObject:
 class EC2Metadata(BaseLazyObject):
     def __init__(
         self,
-        session: requests.Session | None = None,
+        pool_manager: urllib3.PoolManager | None = None,
     ) -> None:
-        if session is None:
-            session = requests.Session()
-        self._session = session
+        if pool_manager is None:
+            pool_manager = urllib3.PoolManager()
+        self._pool_manager = pool_manager
+        self._token: str | None = None
         self._token_updated_at = 0.0
 
         # Previously we used a fixed version of the service, rather than 'latest', in
@@ -81,28 +82,34 @@ class EC2Metadata(BaseLazyObject):
         now = time.time()
         # Refresh up to 60 seconds before expiry
         if now - self._token_updated_at > (TOKEN_TTL_SECONDS - 60):
-            token_response = self._session.put(
+            token_response = self._pool_manager.request(
+                "PUT",
                 f"{self.service_url}api/token",
                 headers={TOKEN_HEADER_TTL: str(TOKEN_TTL_SECONDS)},
                 timeout=5.0,
             )
-            if token_response.status_code != 200:
-                token_response.raise_for_status()
-            token = token_response.text
-            self._session.headers.update({TOKEN_HEADER: token})
+            if token_response.status != 200:
+                raise urllib3.exceptions.HTTPError(
+                    f"Failed to fetch token: {token_response.status}"
+                )
+            self._token = token_response.data.decode("utf-8")
             self._token_updated_at = now
 
-    def _get_url(self, url: str, allow_404: bool = False) -> requests.Response:
+    def _get_url(self, url: str, allow_404: bool = False) -> urllib3.HTTPResponse:
         self._ensure_token_is_fresh()
-        resp = self._session.get(url, timeout=1.0)
-        if resp.status_code != 404 or not allow_404:
-            resp.raise_for_status()
+        headers = {}
+        if self._token is not None:
+            headers[TOKEN_HEADER] = self._token
+        resp = self._pool_manager.request("GET", url, headers=headers, timeout=1.0)
+        assert isinstance(resp, urllib3.HTTPResponse)
+        if resp.status >= 400 and (resp.status != 404 or not allow_404):
+            raise urllib3.exceptions.HTTPError(f"HTTP {resp.status}: {url}")
         return resp
 
     def clear_all(self) -> None:
         super().clear_all()
-        self._session.headers.pop(TOKEN_HEADER, None)
-        self._token_updated_at = 0
+        self._token = None
+        self._token_updated_at = 0.0
 
     @property
     def account_id(self) -> str:
@@ -110,7 +117,7 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def ami_id(self) -> str:
-        return self._get_url(f"{self.metadata_url}ami-id").text
+        return self._get_url(f"{self.metadata_url}ami-id").data.decode("utf-8")
 
     @property
     def autoscaling_target_lifecycle_state(self) -> str | None:
@@ -118,35 +125,41 @@ class EC2Metadata(BaseLazyObject):
             f"{self.metadata_url}autoscaling/target-lifecycle-state",
             allow_404=True,
         )
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def availability_zone(self) -> str:
-        return self._get_url(f"{self.metadata_url}placement/availability-zone").text
+        return self._get_url(
+            f"{self.metadata_url}placement/availability-zone"
+        ).data.decode("utf-8")
 
     @cached_property
     def availability_zone_id(self) -> str | None:
         resp = self._get_url(
             f"{self.metadata_url}placement/availability-zone-id", allow_404=True
         )
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def ami_launch_index(self) -> int:
-        return int(self._get_url(f"{self.metadata_url}ami-launch-index").text)
+        return int(
+            self._get_url(f"{self.metadata_url}ami-launch-index").data.decode("utf-8")
+        )
 
     @cached_property
     def ami_manifest_path(self) -> str:
-        return self._get_url(f"{self.metadata_url}ami-manifest-path").text
+        return self._get_url(f"{self.metadata_url}ami-manifest-path").data.decode(
+            "utf-8"
+        )
 
     @cached_property
     def iam_info(self) -> IamInfoDict | None:
         resp = self._get_url(f"{self.metadata_url}iam/info", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
         result: IamInfoDict = resp.json()
         return result
@@ -156,29 +169,31 @@ class EC2Metadata(BaseLazyObject):
         instance_profile_name = self.instance_profile_name
         if instance_profile_name is None:
             return None
-        result: IamSecurityCredentialsDict = self._get_url(
+        resp = self._get_url(
             f"{self.metadata_url}iam/security-credentials/{instance_profile_name}",
-        ).json()
+        )
+        result: IamSecurityCredentialsDict = resp.json()
         return result
 
     @property
     def instance_action(self) -> str:
-        return self._get_url(f"{self.metadata_url}instance-action").text
+        return self._get_url(f"{self.metadata_url}instance-action").data.decode("utf-8")
 
     @cached_property
     def instance_id(self) -> str:
-        return self._get_url(f"{self.metadata_url}instance-id").text
+        return self._get_url(f"{self.metadata_url}instance-id").data.decode("utf-8")
 
     @cached_property
     def instance_identity_document(self) -> InstanceIdentityDocumentDict:
-        result: InstanceIdentityDocumentDict = self._get_url(
-            f"{self.dynamic_url}instance-identity/document"
-        ).json()
+        resp = self._get_url(f"{self.dynamic_url}instance-identity/document")
+        result: InstanceIdentityDocumentDict = resp.json()
         return result
 
     @cached_property
     def instance_life_cycle(self) -> str:
-        return self._get_url(f"{self.metadata_url}instance-life-cycle").text
+        return self._get_url(f"{self.metadata_url}instance-life-cycle").data.decode(
+            "utf-8"
+        )
 
     @property
     def instance_profile_arn(self) -> str | None:
@@ -203,62 +218,66 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def instance_type(self) -> str:
-        return self._get_url(f"{self.metadata_url}instance-type").text
+        return self._get_url(f"{self.metadata_url}instance-type").data.decode("utf-8")
 
     @cached_property
     def kernel_id(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}kernel-id", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def mac(self) -> str:
-        return self._get_url(f"{self.metadata_url}mac").text
+        return self._get_url(f"{self.metadata_url}mac").data.decode("utf-8")
 
     @cached_property
     def network_interfaces(self) -> dict[str, NetworkInterface]:
-        macs_text = self._get_url(f"{self.metadata_url}network/interfaces/macs/").text
+        macs_text = self._get_url(
+            f"{self.metadata_url}network/interfaces/macs/"
+        ).data.decode("utf-8")
         macs = [line.rstrip("/") for line in macs_text.splitlines()]
         return {mac: NetworkInterface(mac, self) for mac in macs}
 
     @cached_property
     def private_hostname(self) -> str:
-        return self._get_url(f"{self.metadata_url}local-hostname").text
+        return self._get_url(f"{self.metadata_url}local-hostname").data.decode("utf-8")
 
     @cached_property
     def private_ipv4(self) -> str:
-        return self._get_url(f"{self.metadata_url}local-ipv4").text
+        return self._get_url(f"{self.metadata_url}local-ipv4").data.decode("utf-8")
 
     @cached_property
     def public_hostname(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}public-hostname", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def public_ipv4(self) -> str | None:
         resp = self._get_url(f"{self.metadata_url}public-ipv4", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def public_keys(self) -> dict[str, PublicKey]:
         resp = self._get_url(f"{self.metadata_url}public-keys/", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return {}
-        pairs = [line.split("=", 1) for line in resp.text.splitlines()]
+        pairs = [line.split("=", 1) for line in resp.data.decode("utf-8").splitlines()]
         return {name: PublicKey(int(index), self) for index, name in pairs}
 
     @cached_property
     def partition(self) -> str:
-        return self._get_url(f"{self.metadata_url}services/partition").text
+        return self._get_url(f"{self.metadata_url}services/partition").data.decode(
+            "utf-8"
+        )
 
     @cached_property
     def domain(self) -> str:
-        return self._get_url(f"{self.metadata_url}services/domain").text
+        return self._get_url(f"{self.metadata_url}services/domain").data.decode("utf-8")
 
     @cached_property
     def region(self) -> str:
@@ -266,16 +285,20 @@ class EC2Metadata(BaseLazyObject):
 
     @cached_property
     def reservation_id(self) -> str:
-        return self._get_url(f"{self.metadata_url}reservation-id").text
+        return self._get_url(f"{self.metadata_url}reservation-id").data.decode("utf-8")
 
     @cached_property
     def security_groups(self) -> list[str]:
-        return self._get_url(f"{self.metadata_url}security-groups").text.splitlines()
+        return (
+            self._get_url(f"{self.metadata_url}security-groups")
+            .data.decode("utf-8")
+            .splitlines()
+        )
 
     @property
     def spot_instance_action(self) -> SpotInstanceAction | None:
         resp = self._get_url(f"{self.metadata_url}spot/instance-action", allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
         data = resp.json()
         return SpotInstanceAction(
@@ -288,14 +311,14 @@ class EC2Metadata(BaseLazyObject):
     @cached_property
     def tags(self) -> InstanceTags:
         resp = self._get_url(f"{self.metadata_url}tags/instance/")
-        return InstanceTags(resp.text.splitlines(), self)
+        return InstanceTags(resp.data.decode("utf-8").splitlines(), self)
 
     @cached_property
     def user_data(self) -> bytes | None:
         resp = self._get_url(self.userdata_url, allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.content
+        return resp.data
 
 
 class InstanceTags(Mapping[str, str]):
@@ -309,7 +332,7 @@ class InstanceTags(Mapping[str, str]):
             resp = self.parent._get_url(
                 f"{self.parent.metadata_url}tags/instance/{name}"
             )
-            value = resp.text
+            value = resp.data.decode("utf-8")
             self._map[name] = value
         return value
 
@@ -343,11 +366,13 @@ class NetworkInterface(BaseLazyObject):
 
     @cached_property
     def device_number(self) -> int:
-        return int(self.parent._get_url(self._url("device-number")).text)
+        return int(
+            self.parent._get_url(self._url("device-number")).data.decode("utf-8")
+        )
 
     @cached_property
     def interface_id(self) -> str:
-        return self.parent._get_url(self._url("interface-id")).text
+        return self.parent._get_url(self._url("interface-id")).data.decode("utf-8")
 
     @cached_property
     def ipv4_associations(self) -> dict[str, list[str]]:
@@ -355,102 +380,114 @@ class NetworkInterface(BaseLazyObject):
         for public_ip in self.public_ipv4s:
             url = self._url(f"ipv4-associations/{public_ip}")
             resp = self.parent._get_url(url)
-            private_ips = resp.text.splitlines()
+            private_ips = resp.data.decode("utf-8").splitlines()
             associations[public_ip] = private_ips
         return associations
 
     @cached_property
     def ipv6s(self) -> list[str]:
         resp = self.parent._get_url(self._url("ipv6s"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
     @cached_property
     def ipv6_prefix(self) -> list[str]:
         resp = self.parent._get_url(self._url("ipv6-prefix"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
     @cached_property
     def owner_id(self) -> str:
-        return self.parent._get_url(self._url("owner-id")).text
+        return self.parent._get_url(self._url("owner-id")).data.decode("utf-8")
 
     @cached_property
     def private_hostname(self) -> str:
-        return self.parent._get_url(self._url("local-hostname")).text
+        return self.parent._get_url(self._url("local-hostname")).data.decode("utf-8")
 
     @cached_property
     def private_ipv4s(self) -> list[str]:
-        return self.parent._get_url(self._url("local-ipv4s")).text.splitlines()
+        return (
+            self.parent._get_url(self._url("local-ipv4s"))
+            .data.decode("utf-8")
+            .splitlines()
+        )
 
     @cached_property
     def public_hostname(self) -> str | None:
         resp = self.parent._get_url(self._url("public-hostname"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def public_ipv4s(self) -> list[str]:
         resp = self.parent._get_url(self._url("public-ipv4s"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
     @cached_property
     def security_groups(self) -> list[str]:
-        return self.parent._get_url(self._url("security-groups")).text.splitlines()
+        return (
+            self.parent._get_url(self._url("security-groups"))
+            .data.decode("utf-8")
+            .splitlines()
+        )
 
     @cached_property
     def security_group_ids(self) -> list[str]:
-        return self.parent._get_url(self._url("security-group-ids")).text.splitlines()
+        return (
+            self.parent._get_url(self._url("security-group-ids"))
+            .data.decode("utf-8")
+            .splitlines()
+        )
 
     @cached_property
     def subnet_id(self) -> str:
-        return self.parent._get_url(self._url("subnet-id")).text
+        return self.parent._get_url(self._url("subnet-id")).data.decode("utf-8")
 
     @cached_property
     def subnet_ipv4_cidr_block(self) -> str | None:
         resp = self.parent._get_url(self._url("subnet-ipv4-cidr-block"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def subnet_ipv6_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(
             self._url("subnet-ipv6-cidr-blocks"), allow_404=True
         )
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
     @cached_property
     def vpc_id(self) -> str:
-        return self.parent._get_url(self._url("vpc-id")).text
+        return self.parent._get_url(self._url("vpc-id")).data.decode("utf-8")
 
     @cached_property
     def vpc_ipv4_cidr_block(self) -> str | None:
         resp = self.parent._get_url(self._url("vpc-ipv4-cidr-block"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
     @cached_property
     def vpc_ipv4_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(self._url("vpc-ipv4-cidr-blocks"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
     @cached_property
     def vpc_ipv6_cidr_blocks(self) -> list[str]:
         resp = self.parent._get_url(self._url("vpc-ipv6-cidr-blocks"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return []
-        return resp.text.splitlines()
+        return resp.data.decode("utf-8").splitlines()
 
 
 class PublicKey(BaseLazyObject):
@@ -477,9 +514,9 @@ class PublicKey(BaseLazyObject):
     @cached_property
     def openssh_key(self) -> str | None:
         resp = self.parent._get_url(self._url("openssh-key"), allow_404=True)
-        if resp.status_code == 404:
+        if resp.status == 404:
             return None
-        return resp.text
+        return resp.data.decode("utf-8")
 
 
 class SpotInstanceAction:

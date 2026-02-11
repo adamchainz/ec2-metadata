@@ -5,7 +5,7 @@ import json
 from collections.abc import Generator
 from io import BytesIO
 from typing import Any
-from unittest.mock import Mock
+from unittest import mock
 
 import pytest
 import urllib3
@@ -31,8 +31,8 @@ def make_response(*, status: int = 200, body: bytes = b"") -> HTTPResponse:
 
 
 @pytest.fixture(autouse=True)
-def mock_pool(monkeypatch: pytest.MonkeyPatch) -> Generator[Mock]:
-    mock_pm = Mock(spec=urllib3.PoolManager)
+def mock_pool(monkeypatch: pytest.MonkeyPatch) -> Generator[mock.Mock]:
+    mock_pm = mock.Mock(spec=urllib3.PoolManager)
     responses: dict[tuple[str, str], HTTPResponse] = {}
 
     def request_side_effect(method: str, url: str, **kwargs: Any) -> HTTPResponse:
@@ -63,7 +63,7 @@ def test_custom_session(mock_pool):
 
 
 def add_identity_doc_response(
-    mock_pool: Mock,
+    mock_pool: mock.Mock,
     account_id: str = "123456789012",
     region: str = "eu-west-1",
 ) -> InstanceIdentityDocumentDict:
@@ -598,7 +598,7 @@ def test_user_data_something(mock_pool):
 
 
 def add_interface_response(
-    mock_pool: Mock, url: str, text: str = "", status: int = 200, **kwargs: Any
+    mock_pool: mock.Mock, url: str, text: str = "", status: int = 200, **kwargs: Any
 ) -> None:
     full_url = f"http://169.254.169.254/latest/meta-data/network/interfaces/macs/{example_mac}{url}"
     mock_pool._responses[("GET", full_url)] = make_response(
@@ -801,7 +801,7 @@ def test_network_interface_vpc_ipv6_cidr_blocks_none(mock_pool):
 
 
 def add_key_response(
-    mock_pool: Mock,
+    mock_pool: mock.Mock,
     index: int,
     url: str,
     text: str = "",

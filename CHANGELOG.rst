@@ -2,6 +2,9 @@
 Changelog
 =========
 
+3.0.0 (2026-02-11)
+------------------
+
 * Migrate from `requests <https://docs.python-requests.org/>`__ to `urllib3 <https://urllib3.readthedocs.io/>`__ for HTTP requests.
 
   This change reduces the number of dependencies and per-request overhead.

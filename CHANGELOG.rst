@@ -2,6 +2,12 @@
 Changelog
 =========
 
+* Migrate from `requests <https://docs.python-requests.org/>`__ to `urllib3 <https://urllib3.readthedocs.io/>`__ for HTTP requests.
+
+  This change reduces the number of dependencies and per-request overhead.
+
+  As a consequence, the ``EC2Metadata`` class no longer accepts a ``requests.Session`` object, but a ``urllib3.PoolManager``.
+
 * Drop Python 3.9 support.
 
 2.17.0 (2025-10-07)

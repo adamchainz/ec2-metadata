@@ -13,7 +13,7 @@ Changelog
 
   .. code-block:: console
 
-    $ ec2-metadata get instance-id
+    $ imds get instance-id
     i-123456
 
   Read more in `the documentation <https://github.com/adamchainz/ec2-metadata#cli>`__.

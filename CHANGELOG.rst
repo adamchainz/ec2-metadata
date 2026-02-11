@@ -8,6 +8,18 @@ Changelog
 
   As a consequence, the ``EC2Metadata`` class no longer accepts a ``requests.Session`` object, but a ``urllib3.PoolManager``.
 
+* Add a CLI for command line access to metadata values.
+  For example, to output the current instance ID:
+
+  .. code-block:: console
+
+    $ ec2-metadata get instance-id
+    i-123456
+
+  Read more in `the documentation <https://github.com/adamchainz/ec2-metadata#cli>`__.
+
+  `PR #587 <https://github.com/adamchainz/ec2-metadata/pull/587>`__.
+
 * Drop Python 3.9 support.
 
 2.17.0 (2025-10-07)

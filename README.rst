@@ -496,3 +496,40 @@ Again like ``EC2Metadata`` all its attributes cache on first access, and can be 
 
 The SSH public key in OpenSSH format, with a trailing newline, for example: ``ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n``.
 If the key is not available in OpenSSH format, this will be ``None``, however that is unlikely as that is the only format currently supported by the metadata service.
+
+CLI
+===
+
+ec2-metadata also provides a CLI for quickly retrieving one or more metadata values on the command line.
+To use it, run ``ec2-metadata`` or ``python -m ec2_metadata``, along with a subcommand.
+Metadata names can be provided with either snake case (underscores) or kebab case (hyphens) separators.
+
+``get`` subcommand
+------------------
+
+Run ``get`` to display a single metadata value, for example:
+
+.. code-block:: console
+
+    $ ec2-metadata get instance-id
+    i-123456
+
+Add ``-n`` to suppress the trailing newline, for example:
+
+.. code-block:: console
+
+    $ echo $(ec2-metadata get instance-id -n) is me!
+    i-123456$ is me!
+
+``json`` subcommand
+-------------------
+
+Run ``json`` to display multiple metadata values as JSON, for example:
+
+.. code-block:: console
+
+    $ ec2-metadata json region availability-zone
+    {
+      "region": "eu-west-1",
+      "availability-zone": "eu-west-1b"
+    }

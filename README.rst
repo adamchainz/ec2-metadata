@@ -496,3 +496,42 @@ Again like ``EC2Metadata`` all its attributes cache on first access, and can be 
 
 The SSH public key in OpenSSH format, with a trailing newline, for example: ``ssh-rsa AAAAblahblahblah= exampleuser@examplehost\n``.
 If the key is not available in OpenSSH format, this will be ``None``, however that is unlikely as that is the only format currently supported by the metadata service.
+
+CLI
+===
+
+ec2-metadata also provides a CLI for retrieving one or more metadata values on the command line.
+Run it as ``imds`` (short for Instance Metadata Service) or ``python -m ec2_metadata``.
+(The name is *not* ``ec2-metadata`` to avoid conflicting with the basic ``ec2-metadata`` script provided on Amazon Linux.)
+
+Metadata names can be provided in either snake case (with underscores) or kebab case (with hyphens).
+
+``get`` subcommand
+------------------
+
+Run ``get`` to display a single metadata value, for example:
+
+.. code-block:: console
+
+    $ imds get instance-id
+    i-123456
+
+Add ``-n`` to suppress the trailing newline, for example:
+
+.. code-block:: console
+
+    $ echo $(imds get instance-id -n) is me!
+    i-123456$ is me!
+
+``json`` subcommand
+-------------------
+
+Run ``json`` to display multiple metadata values as JSON, for example:
+
+.. code-block:: console
+
+    $ imds json region availability-zone
+    {
+      "region": "eu-west-1",
+      "availability-zone": "eu-west-1b"
+    }

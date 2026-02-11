@@ -65,8 +65,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
 def get_subcommand(name: str, newline: bool) -> int:
     name = name.replace("-", "_")
+    value = getattr(ec2_metadata, name)
+    if value is None:
+        value = ""
     print(
-        getattr(ec2_metadata, name),
+        value,
         end="" if not newline else "\n",
         flush=True,
     )

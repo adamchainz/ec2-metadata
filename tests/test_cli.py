@@ -74,6 +74,16 @@ class TestMain:
             + f"{prog_name} get: error: argument name: Invalid metadata name: invalid-name!. Must be one of: account_id, ami_id, "
         )
 
+    def test_get_valid_name_none(self, capsys):
+        with mock.patch("ec2_metadata.cli.ec2_metadata") as mock_metadata:
+            mock_metadata.user_data = None
+
+            main(["get", "user-data"])
+
+        out, err = capsys.readouterr()
+        assert out == "\n"
+        assert err == ""
+
     def test_get_valid_name(self, capsys):
         with mock.patch("ec2_metadata.cli.ec2_metadata") as mock_metadata:
             mock_metadata.instance_id = "i-1234567890abcdef0"

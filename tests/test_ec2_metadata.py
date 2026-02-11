@@ -36,11 +36,7 @@ def mock_pool(monkeypatch: pytest.MonkeyPatch) -> Generator[Mock]:
     responses: dict[tuple[str, str], HTTPResponse] = {}
 
     def request_side_effect(method: str, url: str, **kwargs: Any) -> HTTPResponse:
-        key = (method, url)
-        if key in responses:
-            return responses[key]
-        resp = make_response(status=404)
-        return resp
+        return responses[(method, url)]
 
     mock_pm.request.side_effect = request_side_effect
     mock_pm._responses = responses

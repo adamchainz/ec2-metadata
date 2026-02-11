@@ -97,10 +97,10 @@ class EC2Metadata(BaseLazyObject):
 
     def _get_url(self, url: str, allow_404: bool = False) -> urllib3.HTTPResponse:
         self._ensure_token_is_fresh()
-        headers = {}
-        if self._token is not None:
-            headers[TOKEN_HEADER] = self._token
-        resp = self._pool_manager.request("GET", url, headers=headers, timeout=1.0)
+        assert self._token is not None
+        resp = self._pool_manager.request(
+            "GET", url, headers={TOKEN_HEADER: self._token}, timeout=1.0
+        )
         assert isinstance(resp, urllib3.HTTPResponse)
         if resp.status >= 400 and (resp.status != 404 or not allow_404):
             raise urllib3.exceptions.HTTPError(f"HTTP {resp.status}: {url}")

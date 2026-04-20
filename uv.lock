@@ -163,7 +163,7 @@ test = [
     { name = "cached-property" },
     { name = "coverage", extras = ["toml"] },
     { name = "pygments" },
-    { name = "pytest" },
+    { name = "pytest", specifier = ">=9" },
     { name = "pytest-randomly" },
 ]
 

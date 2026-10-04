@@ -503,7 +503,7 @@ def test_spot_instance_action(mock_pool):
     sia = ec2_metadata.spot_instance_action
     assert sia is not None
     assert sia.action == "stop"
-    assert sia.time == dt.datetime(2017, 9, 18, 8, 22, 0, tzinfo=dt.timezone.utc)
+    assert sia.time == dt.datetime(2017, 9, 18, 8, 22, 0, tzinfo=dt.UTC)
 
 
 def test_tags_not_enabled(mock_pool):

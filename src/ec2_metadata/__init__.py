@@ -303,9 +303,7 @@ class EC2Metadata(BaseLazyObject):
         data = resp.json()
         return SpotInstanceAction(
             data["action"],
-            dt.datetime.fromisoformat(data["time"].rstrip("Z")).replace(
-                tzinfo=dt.timezone.utc
-            ),
+            dt.datetime.fromisoformat(data["time"].rstrip("Z")).replace(tzinfo=dt.UTC),
         )
 
     @cached_property
